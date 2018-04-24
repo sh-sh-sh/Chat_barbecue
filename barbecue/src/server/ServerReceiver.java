@@ -3,7 +3,7 @@ package server;
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
-import java.util.Map;
+import java.util.List;
 
 public class ServerReceiver extends Thread {
 
@@ -12,12 +12,12 @@ public class ServerReceiver extends Thread {
 	BufferedInputStream filein;
 
 	ChatRoom currentRoom;
-	Map<String, ChatRoom> chatRooms;
+	List<ChatRoom> chatRooms;
 
-	public ServerReceiver(User user, Map<String, ChatRoom> map) {
+	public ServerReceiver(User user, List<ChatRoom> chatRooms) {
 		this.user = user;
-		this.chatRooms = map;
-		currentRoom = chatRooms.get("__waiting__");
+		this.chatRooms = chatRooms;
+		currentRoom = chatRooms.get(0);
 		try {
 			in = new DataInputStream(user.getChatSocket().getInputStream());
 			filein = new BufferedInputStream(user.getFileSocket().getInputStream());
@@ -60,7 +60,7 @@ public class ServerReceiver extends Thread {
 	}
 
 	boolean processCmd(String cmd) {
-		String[] tokens = cmd.split(" ");
+		String[] tokens = cmd.split("[ ]+");
 		if (tokens[0].equals("create")) {
 			// 대기방에 있는지 검증
 			if (currentRoom.name.equals("__waiting__")) {
@@ -69,13 +69,15 @@ public class ServerReceiver extends Thread {
 					room = new ChatRoom(tokens[1], user.getIp_port());
 				} else if (tokens.length == 3) {
 					room = new ChatRoom(tokens[1], user.getIp_port(), tokens[2]);
+				} else {
+					return false;
 				}
+				chatRooms.add(room);
 
-				chatRooms.put(tokens[1], room);
 			} else {
 				return false;
 			}
 		}
-		return false;
+		return true;
 	}
 }

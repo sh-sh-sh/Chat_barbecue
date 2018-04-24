@@ -57,3 +57,8 @@ public class ChatRoom {
 		return false;
 	}
 }
+
+/*
+ * Set<Map.Entry<String, User>> set = users.entrySet(); Iterator<Entry<String,
+ * User>> a = set.iterator(); a.next();
+ */
