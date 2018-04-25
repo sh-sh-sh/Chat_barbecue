@@ -1,13 +1,24 @@
 package server;
 
+import java.io.BufferedOutputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.net.Socket;
 
 public class User {
 	String name;
 	Socket chatSocket;
 	Socket fileSocket;
-
+	ChatRoom currentRoom;
 	String ip_port;
+
+	public ChatRoom getCurrentRoom() {
+		return currentRoom;
+	}
+
+	public void setCurrentRoom(ChatRoom currentRoom) {
+		this.currentRoom = currentRoom;
+	}
 
 	public String getName() {
 		return name;
@@ -41,4 +52,17 @@ public class User {
 		this.ip_port = ip_port;
 	}
 
+	public String toString() {
+		return name;
+	}
+
+	public DataOutputStream getChatOut() throws IOException {
+		DataOutputStream out = new DataOutputStream(chatSocket.getOutputStream());
+		return out;
+	}
+
+	public BufferedOutputStream getFileOut() throws IOException {
+		BufferedOutputStream out = new BufferedOutputStream(fileSocket.getOutputStream());
+		return out;
+	}
 }

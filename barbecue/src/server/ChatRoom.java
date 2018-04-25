@@ -6,11 +6,19 @@ import java.util.Map;
 
 public class ChatRoom {
 
-	String name;
-	String owner;
-	String password;
+	private String name;
+	private String owner;
+	private String password;
 
-	Map<String, User> users;
+	private Map<String, User> users;
+
+	public Map<String, User> getUsers() {
+		return users;
+	}
+
+	public void setUsers(Map<String, User> users) {
+		this.users = users;
+	}
 
 	public ChatRoom(String name, String owner) {
 		this(name, owner, null);
@@ -25,7 +33,7 @@ public class ChatRoom {
 	}
 
 	public boolean addMember(User user) {
-		User us = users.put(user.getIp_port(), user);
+		User us = users.put(user.getName(), user);
 		if (us == null) {
 			return true;
 		} else {
@@ -50,6 +58,18 @@ public class ChatRoom {
 	public boolean setName(String name) {
 		this.name = name;
 		return false;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public String getOwner() {
+		return owner;
+	}
+
+	public String getPassword() {
+		return password;
 	}
 
 	public boolean setPassword(String password) {

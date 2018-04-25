@@ -1,5 +1,6 @@
 package client;
 
+import java.io.BufferedOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
@@ -7,14 +8,14 @@ import java.util.Scanner;
 
 public class ClientSender extends Thread {
 	DataOutputStream out;
-	DataOutputStream Fileout;
+	BufferedOutputStream Fileout;
 	String name;
 	private Scanner sc;
 
 	ClientSender(Socket socket, Socket FileSocket, String name) {
 		try {
 			out = new DataOutputStream(socket.getOutputStream());
-			Fileout = new DataOutputStream(FileSocket.getOutputStream());
+			Fileout = new BufferedOutputStream(FileSocket.getOutputStream());
 			this.name = name;
 		} catch (Exception e) {
 		}
@@ -26,7 +27,7 @@ public class ClientSender extends Thread {
 
 			sc = new Scanner(System.in);
 			while (out != null) {
-				out.writeUTF("[" + name + "]" + sc.nextLine());
+				out.writeUTF(sc.nextLine());
 			}
 		} catch (IOException e) {
 		} finally {
