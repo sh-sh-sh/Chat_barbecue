@@ -5,9 +5,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
 
 /*
@@ -20,7 +17,10 @@ public class GrillServer {
 	int filePortNum;
 
 	// Map<String, ChatRoom> chatRooms;
-	Map<String, ChatRoom> chatRooms;
+	// Map<String, ChatRoom> chatRooms;
+
+	Rooms rooms;
+
 	Properties properties;
 
 	public GrillServer() {
@@ -36,12 +36,11 @@ public class GrillServer {
 		}
 		this.chatPortNum = Integer.parseInt(properties.getProperty("chat"));
 		this.filePortNum = Integer.parseInt(properties.getProperty("file"));
-
-		chatRooms = Collections.synchronizedMap(new HashMap<String, ChatRoom>());
+		rooms = new Rooms();
+		// chatRooms = Collections.synchronizedMap(new HashMap<String, ChatRoom>());
 
 		// 대기방 생성
-		ChatRoom chatroom = new ChatRoom("__waitting__", "__admin__");
-		chatRooms.put(chatroom.getName(), chatroom);
+
 	}
 
 	// 각 포트별로 serversocket을 생성하고,
@@ -69,7 +68,7 @@ public class GrillServer {
 				// 접속 유저를 대기방에 조인시킴\
 				// chatRooms.get(0).addMember(user);
 
-				ServerReceiver receiver = new ServerReceiver(user, chatRooms);
+				ServerReceiver receiver = new ServerReceiver(user, rooms);
 
 				receiver.start();
 			}

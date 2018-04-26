@@ -1,6 +1,8 @@
 package server;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
@@ -72,6 +74,16 @@ public class User {
 
 	public String toString() {
 		return name;
+	}
+
+	public DataInputStream getChatIn() throws IOException {
+		DataInputStream in = new DataInputStream(chatSocket.getInputStream());
+		return in;
+	}
+
+	public BufferedInputStream getFileIn() throws IOException {
+		BufferedInputStream in = new BufferedInputStream(fileSocket.getInputStream());
+		return in;
 	}
 
 	public DataOutputStream getChatOut() throws IOException {
