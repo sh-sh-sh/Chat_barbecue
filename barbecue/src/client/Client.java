@@ -12,23 +12,9 @@ public class Client {
 	String serverIp;
 	int chatPortNum;
 	int filePortNum;
-	String clientName;
 
 	Properties properties;
 	private Scanner sc;
-
-	public String nameCheck() {
-		System.out.println("사용할 닉네임을 입력하세요.");
-		System.out.println("(*특수문자 입력 불가능하며, 10글자까지 입력 가능합니다.)");
-		sc = new Scanner(System.in);
-		clientName = sc.nextLine();
-		if (clientName.matches("[0-9|a-z|A-Z|ㄱ-ㅎ|ㅏ-ㅣ|가-힝]*") && clientName.length() <= 10) {
-			return clientName;
-		} else {
-			System.out.println("잘못된 입력입니다.");
-			return nameCheck();
-		}
-	}
 
 	public Client() {
 		properties = new Properties();
@@ -50,7 +36,6 @@ public class Client {
 	}
 
 	public void start() {
-		this.clientName = nameCheck();
 		Socket socket = null;
 		Socket FileSocket = null;
 		try {
@@ -58,7 +43,7 @@ public class Client {
 			FileSocket = new Socket(serverIp, filePortNum);
 			System.out.println("서버에 연결되었습니다.");
 
-			Thread sender = new Thread(new ClientSender(socket, FileSocket, clientName));
+			Thread sender = new Thread(new ClientSender(socket, FileSocket));
 			Thread receiver = new Thread(new ClientReceiver(socket, FileSocket));
 
 			sender.start();

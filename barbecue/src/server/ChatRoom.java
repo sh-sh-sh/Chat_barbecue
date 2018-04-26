@@ -1,5 +1,6 @@
 package server;
 
+import java.io.File;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -8,9 +9,15 @@ public class ChatRoom {
 
 	private String name;
 	private String owner;
-	private String password;
+	private String password = null;
 
 	private Map<String, User> users;
+
+	private Map<String, File> Files;
+
+	public Map<String, File> getFiles() {
+		return Files;
+	}
 
 	public Map<String, User> getUsers() {
 		return users;
@@ -28,7 +35,7 @@ public class ChatRoom {
 		this.name = name;
 		this.owner = owner;
 		this.password = password;
-
+		Files = new HashMap<>();
 		users = Collections.synchronizedMap(new HashMap<>());
 	}
 
@@ -66,6 +73,10 @@ public class ChatRoom {
 
 	public String getOwner() {
 		return owner;
+	}
+
+	public void setOwner(String owner) {
+		this.owner = owner;
 	}
 
 	public String getPassword() {

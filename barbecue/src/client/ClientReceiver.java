@@ -5,6 +5,8 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.net.Socket;
 
+import server.FileReceiver;
+
 public class ClientReceiver extends Thread {
 	DataInputStream in;
 	BufferedInputStream Filein;
@@ -22,7 +24,15 @@ public class ClientReceiver extends Thread {
 	public void run() {
 		while (in != null) {
 			try {
-				System.out.println(in.readUTF());
+				String msg = in.readUTF();
+				if (msg.equals("ㅹ")) {// 프로그램 종료
+					System.exit(0);
+				} else if (msg.startsWith("ㅨ")) {// 파일 받기
+					FileReceiver fr = new FileReceiver(msg.substring(1), Filein);
+					fr.start();
+				} else {
+					System.out.println(msg);
+				}
 			} catch (IOException e) {
 			}
 		}

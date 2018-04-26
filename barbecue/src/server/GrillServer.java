@@ -49,7 +49,6 @@ public class GrillServer {
 	public void start() {
 		ServerSocket chatSS, FileSS;
 		Socket chatSocket, fileSocket;
-		int count = 0;
 		try {
 			chatSS = new ServerSocket(chatPortNum);
 			FileSS = new ServerSocket(filePortNum);
@@ -63,10 +62,8 @@ public class GrillServer {
 				user.setFileSocket(fileSocket);
 				user.setIp_port(chatSocket.getInetAddress().toString() + ":" + String.valueOf(chatSocket.getPort()));
 
-				count++;
 				System.out.println("[" + chatSocket.getInetAddress() + ":" + chatSocket.getPort() + "]" + "에서 접속하였습니다.");
-				System.out.println("[" + fileSocket.getInetAddress() + ":" + fileSocket.getPort() + "]" + "에서 접속하였습니다.");
-				System.out.println(count + "명이 서버에 접속중...");
+
 				// 각 클라이언트 별로 소켓을 가지고 처리하는 무엇
 
 				// 접속 유저를 대기방에 조인시킴\

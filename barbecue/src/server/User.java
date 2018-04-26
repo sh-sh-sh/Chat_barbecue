@@ -6,11 +6,29 @@ import java.io.IOException;
 import java.net.Socket;
 
 public class User {
-	String name;
-	Socket chatSocket;
-	Socket fileSocket;
-	ChatRoom currentRoom;
-	String ip_port;
+	private String name;
+	private Socket chatSocket;
+	private Socket fileSocket;
+	private ChatRoom currentRoom;
+	private String ip_port;
+	private String invite;
+	private String invitepw;
+
+	public String getInvitepw() {
+		return invitepw;
+	}
+
+	public void setInvitepw(String invitepw) {
+		this.invitepw = invitepw;
+	}
+
+	public String getInvite() {
+		return invite;
+	}
+
+	public void setInvite(String invite) {
+		this.invite = invite;
+	}
 
 	public ChatRoom getCurrentRoom() {
 		return currentRoom;
