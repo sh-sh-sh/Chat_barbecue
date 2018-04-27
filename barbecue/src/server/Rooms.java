@@ -241,8 +241,12 @@ public class Rooms {
 				Set<String> set = user.getCurrentRoom().getUsers().keySet();
 				Iterator<String> it = set.iterator();
 				if (it.hasNext()) {
-					user.getCurrentRoom().setOwner(it.next());
-					sendToAll("	* " + user.getCurrentRoom().getOwner() + "님으로 방장이 변경되었습니다.", user);
+					String a = it.next();
+					if (!user.getName().equals(a)) {// 본인이 걸렸을 경우
+						user.getCurrentRoom().setOwner(it.next());
+						sendToAll("	* " + user.getCurrentRoom().getOwner() + "님으로 방장이 변경되었습니다.", user);
+						return headChange(tokens, user);
+					}
 					return "	* 성공 : 랜덤으로 방장이 변경되었습니다.";
 				} else {
 					return "	* 오류 : 권한을 넘길 유저가 없습니다.";
@@ -405,6 +409,13 @@ public class Rooms {
 			}
 			return "	* 대기방으로 이동되었습니다.";
 		} else {
+			if (alone && isOwner(user)) {// 방에 혼자 있고 오너였으면(대기방은 혼자있었어도 없애면 안되니까)
+				try {
+					send(roomDestroy2(exRoom.getName()), user);// 원래 있던 방을 부순다
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
 			return "	* 기존 방에서 퇴장되었습니다.";
 		}
 

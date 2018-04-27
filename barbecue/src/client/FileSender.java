@@ -34,7 +34,6 @@ public class FileSender extends Thread {
 		File file = new File(src);
 		if (file.exists()) {
 			try {
-				System.out.println("체크1:" + file.length());
 				FileSend();
 				System.out.println(filename + "전송 준비 완료");
 				out.writeUTF("ㅨ" + filename + "ㅨ" + file.length());
@@ -59,21 +58,17 @@ public class FileSender extends Thread {
 		byte[] bytes = new byte[1024];
 		int len = 0;
 		try {
-			System.out.println("체크2");
 			// 파일 내용
 			int total = 0;
 			while ((len = bin.read(bytes, 0, bytes.length)) != -1) {
-				System.out.println("체크3");
 				Fileout.write(bytes, 0, len);
 				total += len;
 			}
-			System.out.println("체크4");
 			Fileout.flush();
 			System.out.println("전송: " + filename + "(" + total + ")bytes 전송 완료됨");
 
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		System.out.println("체크5");
 	}
 }

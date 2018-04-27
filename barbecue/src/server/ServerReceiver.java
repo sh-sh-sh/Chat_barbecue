@@ -4,6 +4,7 @@ import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 
 public class ServerReceiver extends Thread {
 
@@ -58,7 +59,8 @@ public class ServerReceiver extends Thread {
 				} else if (msg.startsWith("ㅨ")) {// 파일 수신됨
 					System.out.println("파일 수신됨2");
 					String[] cmd = msg.split("ㅨ");
-					FileReceiver fr = new FileReceiver(cmd[1], Integer.parseInt(cmd[1]), user.getCurrentRoom().getName(), filein,
+					System.out.println(Arrays.toString(cmd));
+					FileReceiver fr = new FileReceiver(cmd[1], Integer.parseInt(cmd[2]), user.getCurrentRoom().getName(), filein,
 							user.getChatOut());
 					fr.start();
 					sleep(1000);
@@ -68,8 +70,7 @@ public class ServerReceiver extends Thread {
 				} else if (msg.equals("ㅱ")) {// 상대방이 파일 다운 완료함
 					if (user.fs != null) {
 						user.fs.interrupt();
-						while (!user.fs.isInterrupted()) {// 인터럽트 대기
-							System.out.println("인터럽트 대기중");
+						while (user.fs.isAlive()) {
 						}
 						// System.out.println("파일 전송 완료. 파일 전송 스레드 마침");
 						user.fs = null;

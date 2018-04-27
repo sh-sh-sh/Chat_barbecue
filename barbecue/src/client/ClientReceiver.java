@@ -33,15 +33,12 @@ public class ClientReceiver extends Thread {
 					System.exit(0);
 				} else if (msg.startsWith("ㅨ")) {// 파일 받기
 					String[] cmd = msg.split("ㅨ");
-					System.out.println("파일 수신됨1");
-					System.out.println("cmd[0]:" + cmd[0] + ",cmd[1]:" + cmd[1]);
-					FileReceiver fr = new FileReceiver(cmd[0], Integer.parseInt(cmd[1]), Filein, sender.out);
+					FileReceiver fr = new FileReceiver(cmd[1], Integer.parseInt(cmd[2]), Filein, sender.out);
 					fr.start();
 				} else if (msg.equals("ㅱ")) {// 상대가 파일 다운 완료
 					if (sender.filesender != null) {
 						sender.filesender.interrupt();
-						while (!sender.filesender.isInterrupted()) {// 인터럽트 대기
-							System.out.println("인터럽트 대기중");
+						while (sender.filesender.isAlive()) {
 						}
 						sender.filesender = null;
 						System.out.println("파일샌더 초기화 완료");
