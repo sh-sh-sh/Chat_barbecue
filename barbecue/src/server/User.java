@@ -7,6 +7,8 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 
+import client.FileSender;
+
 public class User {
 	private String name;
 	private Socket chatSocket;
@@ -15,6 +17,7 @@ public class User {
 	private String ip_port;
 	private String invite;
 	private String invitepw;
+	public FileSender fs;
 
 	public String getInvitepw() {
 		return invitepw;

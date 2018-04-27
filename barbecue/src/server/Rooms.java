@@ -149,6 +149,9 @@ public class Rooms {
 	}
 
 	private String FileList(String[] tokens, User user) throws IOException {
+		if (user.getCurrentRoom().getFiles().size() == 0) {
+			return "	* " + user.getCurrentRoom().getName() + "에 업로드된 파일이 없습니다.";
+		}
 		Set<String> set = user.getCurrentRoom().getFiles().keySet();
 		Iterator<String> it = set.iterator();
 		send(bar, user);
@@ -174,8 +177,8 @@ public class Rooms {
 
 	private String FileReceive(String[] tokens, User user) throws IOException {
 		if (user.getCurrentRoom().getFiles().containsKey(tokens[1])) {// 해당 이름의 파일이 존재하면
-			FileSender fs = new FileSender(tokens[1], user.getCurrentRoom().getName(), user.getChatOut(), user.getFileOut());
-			fs.start();
+			user.fs = new FileSender(tokens[1], user.getCurrentRoom().getName(), user.getChatOut(), user.getFileOut());
+			user.fs.start();
 		} else {
 			return "	* 오류 : 해당 이름을 가진 파일이 존재하지 않습니다.";
 		}

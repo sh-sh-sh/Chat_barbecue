@@ -43,8 +43,9 @@ public class Client {
 			FileSocket = new Socket(serverIp, filePortNum);
 			System.out.println("서버에 연결되었습니다.");
 
-			Thread sender = new Thread(new ClientSender(socket, FileSocket));
-			Thread receiver = new Thread(new ClientReceiver(socket, FileSocket));
+			ClientSender sd = new ClientSender(socket, FileSocket);
+			Thread sender = new Thread(sd);
+			Thread receiver = new Thread(new ClientReceiver(socket, FileSocket, sd));
 
 			sender.start();
 			receiver.start();

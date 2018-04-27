@@ -14,6 +14,7 @@ public class FileSender extends Thread {
 	String filename;
 	BufferedInputStream bin;
 	String src;
+	boolean sys;
 
 	FileSender(String filename, DataOutputStream out, BufferedOutputStream Fileout) {// 유저용
 		this.out = out;
@@ -30,11 +31,13 @@ public class FileSender extends Thread {
 	}
 
 	public void run() {
-		File file = new File(filename);
+		File file = new File(src);
 		if (file.exists()) {
 			try {
+				System.out.println("체크1:" + file.length());
 				FileSend();
-				out.writeUTF("ㅨ" + filename);
+				System.out.println(filename + "전송 준비 완료");
+				out.writeUTF("ㅨ" + filename + "ㅨ" + file.length());
 			} catch (IOException e) {
 				// TODO 자동 생성된 catch 블록
 				e.printStackTrace();
@@ -43,13 +46,12 @@ public class FileSender extends Thread {
 			System.out.println("존재하지 않는 파일입니다.");
 		}
 		try {
-			sleep(300000);// 5분간 스레드 유지
+			sleep(300000);
 		} catch (InterruptedException e) {
-			// TODO 자동 생성된 catch 블록
-			e.printStackTrace();
+			System.out.println(filename + "전송 완료. 파일 전송 스레드를 마칩니다.");
 		}
-		System.out.println("파일 전송용 스레드 마침");
-		interrupt();
+		// System.out.println("파일 전송용 스레드 마침");
+		// interrupt();
 	} // run()
 
 	public void FileSend() throws UnsupportedEncodingException, IOException {
@@ -57,17 +59,21 @@ public class FileSender extends Thread {
 		byte[] bytes = new byte[1024];
 		int len = 0;
 		try {
+			System.out.println("체크2");
 			// 파일 내용
 			int total = 0;
 			while ((len = bin.read(bytes, 0, bytes.length)) != -1) {
+				System.out.println("체크3");
 				Fileout.write(bytes, 0, len);
 				total += len;
 			}
+			System.out.println("체크4");
 			Fileout.flush();
-			Fileout.close();
-			System.out.println("전송: " + total + "bytes 전송 완료됨");
+			System.out.println("전송: " + filename + "(" + total + ")bytes 전송 완료됨");
 
 		} catch (IOException e) {
+			e.printStackTrace();
 		}
+		System.out.println("체크5");
 	}
 }
