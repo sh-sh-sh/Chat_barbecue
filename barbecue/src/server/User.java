@@ -18,6 +18,15 @@ public class User {
 	private String invite;
 	private String invitepw;
 	public FileSender fs;
+	private boolean suverUser;
+
+	public boolean isSuverUser() {
+		return suverUser;
+	}
+
+	public void setSuverUser(boolean suverUser) {
+		this.suverUser = suverUser;
+	}
 
 	public String getInvitepw() {
 		return invitepw;

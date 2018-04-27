@@ -79,7 +79,11 @@ public class ServerReceiver extends Thread {
 						System.out.println("파일 전송 닫힘 에러");
 					}
 				} else {// massage
-					rooms.sendToAll(msg, user);
+					if (msg.contains("ㅱ") || msg.contains("ㅨ") || msg.contains("ㅹ")) {
+						send("	* : 사용할 수 없는 특수문자를 입력하셨습니다.");
+					} else {
+						rooms.sendToAll(msg, user);
+					}
 				}
 			}
 		} catch (IOException e) {
