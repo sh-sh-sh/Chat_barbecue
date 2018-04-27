@@ -10,9 +10,6 @@ public class ServerReceiver extends Thread {
 	User user;
 	DataInputStream in;
 	BufferedInputStream filein;
-	final String bar = "-------------------------------------------------------------------------";
-
-	// Map<String, ChatRoom> chatRooms;
 
 	Rooms rooms;
 
@@ -37,10 +34,12 @@ public class ServerReceiver extends Thread {
 	public void run() {
 		try {
 			user.setName(user.getIp_port());
-			rooms.checkName("__waitting__", user);
+			if (!rooms.checkName("__waitting__", user)) {
+				System.out.println("에러 00 : checkName 실패 - " + user.getName());
+			}
 
 			if (!rooms.addMember("__waitting__", user)) {
-				System.out.println("에러 01:addmember 실패");
+				System.out.println("에러 01 : addmember 실패 - " + user.getName());
 			}
 			System.out.println("[" + user.getName() + "]이 [" + user.getCurrentRoom().getName() + "]에 들어감");
 			System.out.println("[" + user.getCurrentRoom().getName() + "]의 접속자 목록 : "
@@ -52,17 +51,18 @@ public class ServerReceiver extends Thread {
 			while (in != null) {
 				msg = in.readUTF();
 				if (msg.startsWith("/")) {// command
-					String cmsg = processCmd(msg.substring(1));
+					String cmsg = rooms.processCmd(msg.substring(1), user);
 					if (cmsg != null) {
 						send(cmsg);// 커멘드를 처리한 결과 메세지 전송
 					}
-				} else if (msg.startsWith("ㅨ")) {// 파일 받을때
+				} else if (msg.startsWith("ㅨ")) {// 파일 수신됨
 					String[] cmd = msg.split("ㅨ");
 					FileReceiver fr = new FileReceiver(cmd[1], user.getCurrentRoom().getName(), filein);
 					fr.start();
 					sleep(1000);
 					user.getCurrentRoom().getFiles().put(cmd[1], new File("D://" + user.getCurrentRoom() + "//" + cmd[1]));
-					rooms.sendToAll("	* " + user.getName() + "님이 " + cmd[1] + "파일을 보냈습니다. 파일을 받으려면 /파일받기 파일이름 을 입력하세요.", user);
+					rooms.sendToAll("	* " + user.getName() + "님이 " + cmd[1] + "파일을 보냈습니다. 파일을 받으려면 /filedown 파일이름 을 입력하세요.",
+							user);
 				} else {// massage
 					rooms.sendToAll(msg, user);
 				}
@@ -79,7 +79,9 @@ public class ServerReceiver extends Thread {
 				user.getChatSocket().close();
 				user.getFileSocket().close();
 				ChatRoom a = user.getCurrentRoom();
-				a.removeMember(user.getName());
+				if (!rooms.removeMember(user.getCurrentRoom().getName(), user.getName())) {
+					System.out.println("에러 02 : removeMember 실패 - " + user.getName());
+				}
 				rooms.sendToAll("	* [" + user.getName() + "]님이 프로그램을 종료하였습니다.", user);
 				System.out.println(" [" + a.getName() + "]에서 [" + user.getName() + "]님이 접속을 종료하였습니다.");
 				System.out.println("현재 [" + a.getName() + "] 방 접속자 수는 " + a.getUsers().size() + "입니다.");
@@ -88,12 +90,6 @@ public class ServerReceiver extends Thread {
 				// TODO 자동 생성된 catch 블록
 				e.printStackTrace();
 			}
-
 		}
 	}
-
-	String processCmd(String cmd) throws IOException {
-		return rooms.processCmd(cmd, user);
-	}
-
 }

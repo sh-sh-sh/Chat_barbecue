@@ -25,7 +25,7 @@ public class ClientSender extends Thread {
 			sc = new Scanner(System.in);
 			while (out != null) {
 				String msg = sc.nextLine();
-				if (msg.startsWith("/파일전송")) {
+				if (msg.startsWith("/fileup")) {
 					String[] token = msg.split("[ ]+");
 					filesender = new FileSender(token[1], out, Fileout);
 					filesender.start();

@@ -16,7 +16,7 @@ public class Rooms {
 
 	public Rooms() {
 		chatRooms = Collections.synchronizedMap(new HashMap<String, ChatRoom>());
-		ChatRoom chatroom = new ChatRoom("__waitting__", "__admin__");
+		ChatRoom chatroom = new ChatRoom("__waitting__", "__admin__");// 초기생성시 대기방 생성해 추가
 		chatRooms.put(chatroom.getName(), chatroom);
 	}
 
@@ -24,44 +24,49 @@ public class Rooms {
 		return chatRooms.get(roomname).addMember(user);
 	}
 
-	private void send(String msg, User user) throws IOException {// 사용자에게 전달하는 메세지에 쓰는 메소드 줄인거
-		user.getChatOut().writeUTF(msg);
+	public synchronized boolean removeMember(String roomname, String username) {
+		return chatRooms.get(roomname).removeMember(username);
 	}
 
-	void checkName(String roomName, User user) throws IOException {
-		send("	* 사용할 닉네임을 입력하세요.", user);
-		send("	* 특수문자 입력 불가능하며, 10글자까지 입력 가능합니다.", user);
-		String clientName = user.getChatIn().readUTF();
-		if (clientName.matches("[0-9|a-z|A-Z|ㄱ-ㅎ|ㅏ-ㅣ|가-힝]*") && clientName.length() <= 10) {// 닉네임 제약에 걸리지 않을 경우
-			overlapCheck(clientName, roomName, user);// 중복검사
-		} else {// 특수문자가 들어갔을 경우
-			send("	* SYSTEM : 잘못된 입력입니다.", user);
-			checkName(roomName, user);
-		}
+	private void send(String msg, User user) throws IOException {// 사용자에게 전달하는 메세지에 쓰는 메소드 줄인거
+		user.getChatOut().writeUTF(msg);
 	}
 
 	public synchronized void setCurrentRoom(String roomname, User user) {
 		user.setCurrentRoom(chatRooms.get(roomname));
 	}
 
-	synchronized void overlapCheck(String name, String roomName, User user) throws IOException {// 닉네임 중복검사
+	boolean checkName(String roomName, User user) throws IOException {// 닉네임을 받아서 제약에 걸리는지 체크
+		send("	* 사용할 닉네임을 입력하세요.", user);
+		send("	* 특수문자 입력 불가능하며, 10글자까지 입력 가능합니다.", user);
+		String clientName = user.getChatIn().readUTF();
+		if (clientName.matches("[0-9|a-z|A-Z|ㄱ-ㅎ|ㅏ-ㅣ|가-힝]*") && clientName.length() <= 10) {// 닉네임 제약에 걸리지 않을 경우
+			return overlapCheck(clientName, roomName, user);// 중복검사
+		} else {// 특수문자가 들어갔을 경우
+			send("	* SYSTEM : 잘못된 입력입니다.", user);
+			return checkName(roomName, user);
+		}
+	}
+
+	synchronized boolean overlapCheck(String name, String roomName, User user) throws IOException {// 닉네임 중복검사
 		if (chatRooms.get(roomName).getUsers().size() == 0) {// 해당 방 유저가 0인경우 중복검사 안함(ex:대기방 최초 접속자)
 			user.setName(name);
+			return true;
 		}
 		Set<String> set = chatRooms.get(roomName).getUsers().keySet();
 		Iterator<String> it = set.iterator();
 		while (it.hasNext()) {
 			if (name.equals(it.next())) {// 방에 중복 닉네임이 있을 경우
 				send("	* SYSTEM : 방에 중복된 이름이 있습니다. ", user);
-				checkName(roomName, user);
-			} else {// 방에 중복 닉네임이 없을 경우
-				user.setName(name);
+				return checkName(roomName, user);
 			}
-		}
+		} // 방에 중복된 이름이 없었을 경우
+		user.setName(name);
+		return true;
 	}
 
-	synchronized void sendToAll(String msg, User user) throws IOException {
-		if (msg.equals("ㅹ")) {
+	synchronized void sendToAll(String msg, User user) throws IOException {// user가 있는 방의 모든 유저들에게 메세지 보냄
+		if (msg.equals("ㅹ") || msg.startsWith("ㅨ")) {
 			send("해당 특수문자는 사용이 불가능합니다.", user);
 		}
 		Iterator<String> it = user.getCurrentRoom().getUsers().keySet().iterator();
@@ -79,7 +84,7 @@ public class Rooms {
 		} // while
 	}
 
-	String processCmd(String cmd, User user) throws IOException {
+	String processCmd(String cmd, User user) throws IOException {// 커맨드 처리
 		String[] tokens = cmd.split("[ ]+");
 		if (tokens[0].equals("?")) {
 			send(bar, user);
@@ -91,8 +96,9 @@ public class Rooms {
 			send("/users - 해당 방 유저 목록 보기", user);
 			send("/owner - 해당 방 방장 보기", user);
 			send("/sysexit - 프로그램 종료", user);
-			send("/파일전송 파일이름 - 접속한 방에 파일 보내기", user);
-			send("/파일받기 파일이름 - 접속한 방에 전송된 파일 받기", user);
+			send("/filelist - 접속한 방에 업로드된 파일 보기", user);
+			send("/fileup 파일이름 - 접속한 방에 파일 보내기", user);
+			send("/filedown 파일이름 - 접속한 방에 전송된 파일 받기 (받은 파일은 D://barbecue 폴더에 저장됩니다.)", user);
 			send("/waitusers -대기방 유저 목록 보기", user);
 			send("/invite 유저명 -유저 초대(대기방에 있는 유저만 초대 가능)", user);
 			send("/y 초대가 있으면 가장 최근의 초대가 승락됨", user);
@@ -125,7 +131,9 @@ public class Rooms {
 			return y(tokens, user);
 		} else if (tokens[0].equals("n")) {
 			return n(tokens, user);
-		} else if (tokens[0].equals("파일받기")) {
+		} else if (tokens[0].equals("filelist")) {
+			return FileList(tokens, user);
+		} else if (tokens[0].equals("filedown")) {
 			return FileReceive(tokens, user);
 		} else if (tokens[0].equals("setpw")) {
 			return setpw(tokens, user);
@@ -140,11 +148,23 @@ public class Rooms {
 		}
 	}
 
-	private String waitusers(String[] tokens, User user) throws IOException {
+	private String FileList(String[] tokens, User user) throws IOException {
+		Set<String> set = user.getCurrentRoom().getFiles().keySet();
+		Iterator<String> it = set.iterator();
+		send(bar, user);
+		send("	*** " + user.getCurrentRoom().getName() + "의  파일 목록 ***", user);
+		while (it.hasNext()) {
+			send(it.next(), user);
+		}
+		send(bar, user);
+		return null;
+	}
+
+	synchronized private String waitusers(String[] tokens, User user) throws IOException {
 		Set<String> set = chatRooms.get("__waitting__").getUsers().keySet();
 		Iterator<String> it = set.iterator();
 		send(bar, user);
-		send("	*** " + user.getCurrentRoom().getName() + "의 유저 목록 ***", user);
+		send("	*** " + chatRooms.get("__waitting__").getName() + "의 유저 목록 ***", user);
 		while (it.hasNext()) {
 			send(it.next(), user);
 		}
@@ -307,9 +327,24 @@ public class Rooms {
 
 	synchronized private String roomJoin(String[] tokens, User user) throws IOException {// 방에 들어가는 메소드
 		if (chatRooms.containsKey(tokens[1])) {// 입력한 방 이름이 존재할 경우
-			if (chatRooms.get(tokens[1]).getPassword() != null) {// 해당 방에 비밀번호가 존재할 경우
-				if (tokens.length > 1 && tokens[2].equals(chatRooms.get(tokens[1]).getPassword())) {// 비밀번호가 일치할 경우
-					roomex(tokens[1], user);// 기존 방에서 퇴장하고
+			if (user.getCurrentRoom().getName().equals(tokens[1])) {// 입력한 방 이름이 자기가 있는 방일 경우
+				return "	* 오류 : 이미 해당 방에 입장해 있습니다.";
+			} else {
+				if (chatRooms.get(tokens[1]).getPassword() != null) {// 해당 방에 비밀번호가 존재할 경우
+					if (tokens.length > 1 && tokens[2].equals(chatRooms.get(tokens[1]).getPassword())) {// 비밀번호가 일치할 경우
+						roomex(user, false);// 기존 방에서 퇴장하고
+						chatRooms.get(tokens[1]).addMember(user);
+						user.setCurrentRoom(chatRooms.get(tokens[1]));
+						sendToAll("	* " + user.getName() + "님이 입장하셨습니다.", user);
+						System.out.println(user.getName() + "님이 " + user.getCurrentRoom().getName() + "에 입장하였습니다.");
+						System.out.println("[" + user.getCurrentRoom().getName() + "]의 접속자 목록 : "
+								+ user.getCurrentRoom().getUsers().keySet().toString());
+						return "	* " + user.getCurrentRoom().getName() + "에 입장되었습니다.";
+					} else {
+						return "	* 오류 : 패스워드가 일치하지 않습니다.";
+					}
+				} else {// 비밀번호가 존재하지 않을 경우
+					roomex(user, false);// 기존 방에서 퇴장하고
 					chatRooms.get(tokens[1]).addMember(user);
 					user.setCurrentRoom(chatRooms.get(tokens[1]));
 					sendToAll("	* " + user.getName() + "님이 입장하셨습니다.", user);
@@ -317,18 +352,7 @@ public class Rooms {
 					System.out.println("[" + user.getCurrentRoom().getName() + "]의 접속자 목록 : "
 							+ user.getCurrentRoom().getUsers().keySet().toString());
 					return "	* " + user.getCurrentRoom().getName() + "에 입장되었습니다.";
-				} else {
-					return "	* 오류 : 패스워드가 일치하지 않습니다.";
 				}
-			} else {// 비밀번호가 존재하지 않을 경우
-				roomex(tokens[1], user);// 기존 방에서 퇴장하고
-				chatRooms.get(tokens[1]).addMember(user);
-				user.setCurrentRoom(chatRooms.get(tokens[1]));
-				sendToAll("	* " + user.getName() + "님이 입장하셨습니다.", user);
-				System.out.println(user.getName() + "님이 " + user.getCurrentRoom().getName() + "에 입장하였습니다.");
-				System.out.println("[" + user.getCurrentRoom().getName() + "]의 접속자 목록 : "
-						+ user.getCurrentRoom().getUsers().keySet().toString());
-				return "	* " + user.getCurrentRoom().getName() + "에 입장되었습니다.";
 			}
 		} else {
 			return "	* 오류 : 존재하지 않는 방 이름입니다.";
@@ -336,7 +360,7 @@ public class Rooms {
 	}
 
 	private String sysExit(User user) throws IOException {// 방에서 퇴장시키고 커맨드 부른 유저 시스템 종료시킴
-		roomex(user.getCurrentRoom().getName(), user);
+		roomex(user, false);
 		return "ㅹ";
 	}
 
@@ -344,12 +368,14 @@ public class Rooms {
 		if (user.getCurrentRoom().getName().equals("__waitting__")) {
 			return "	* 오류 : 대기방에서는 퇴장할 수 없습니다.";
 		}
-		return roomex(tokens[1], user);
+		return roomex(user, true);
 	}
 
-	synchronized private String roomex(String roomName, User user) throws IOException {// 방에서 퇴장
+	synchronized private String roomex(User user, boolean gowait) throws IOException {// 방에서 퇴장
 		ChatRoom exRoom = user.getCurrentRoom();
-		sendToAll("	* [" + user.getName() + "]님이 [" + user.getCurrentRoom().getName() + "]에서 퇴장하였습니다.", user);
+		if (!exRoom.getName().equals("__waitting__")) {
+			sendToAll("	* [" + user.getName() + "]님이 [" + user.getCurrentRoom().getName() + "]에서 퇴장하였습니다.", user);
+		}
 		boolean alone = user.getCurrentRoom().getUsers().size() == 1;// 방에 혼자 있었는지 체크
 
 		if (isOwner(user) && !alone) {// 오너였고 혼자가 아니었으면
@@ -357,20 +383,27 @@ public class Rooms {
 			headChange(tokens, user);// 방장을 바꾼다
 		}
 		if (!user.getCurrentRoom().removeMember(user.getName())) {
+			System.out.println("에러! roomex의 removeMember 실패-" + user.getName());
 			return "	* 오류 : 해당 유저를 퇴장시키지 못했습니다.";
 		}
+
 		System.out.println("[" + user.getName() + "]님이 [" + exRoom.getName() + "]에서 퇴장하였습니다.");
 		System.out.println("[" + exRoom.getName() + "]의 접속자 목록 : " + exRoom.getUsers().keySet().toString());
-		chatRooms.get("__waitting__").getUsers().put(user.getName(), user);
-		user.setCurrentRoom(chatRooms.get("__waitting__"));
-		if (alone && isOwner(user)) {// 방에 혼자 있고 오너였으면(대기방은 혼자있었어도 없애면 안되니까)
-			try {
-				send(roomDestroy2(exRoom.getName()), user);// 원래 있던 방을 부순다
-			} catch (IOException e) {
-				e.printStackTrace();
+
+		if (gowait) {
+			chatRooms.get("__waitting__").getUsers().put(user.getName(), user);
+			user.setCurrentRoom(chatRooms.get("__waitting__"));
+			if (alone && isOwner(user)) {// 방에 혼자 있고 오너였으면(대기방은 혼자있었어도 없애면 안되니까)
+				try {
+					send(roomDestroy2(exRoom.getName()), user);// 원래 있던 방을 부순다
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
+			return "	* 대기방으로 이동되었습니다.";
+		} else {
+			return "	* 기존 방에서 퇴장되었습니다.";
 		}
-		return "	* 대기방으로 이동되었습니다.";
 
 	}
 
@@ -410,9 +443,10 @@ public class Rooms {
 				// TODO 자동 생성된 catch 블록
 				e.printStackTrace();
 			}
-			return "	* 성공:방 생성 완료";
+			return "	* 성공 : 방 생성 완료";
 		} else {// 대기방이 아닌 방에서 호출했을 경우
-			return "	* 오류:대기방이 아닌 방에서 방 생성 불가";
+			return "	* 오류 : 대기방이 아닌 방에서 방 생성 불가";
 		}
 	}
+
 }
