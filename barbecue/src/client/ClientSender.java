@@ -4,7 +4,7 @@ import java.io.BufferedOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
-import java.util.Scanner;
+import java.util.Scanner; 
 
 public class ClientSender extends Thread {
 	DataOutputStream out;
@@ -38,9 +38,9 @@ public class ClientSender extends Thread {
 			try {
 				out.close();
 				Fileout.close();
-				System.out.println("Àü¼ÛÀÌ Á¾·áµÇ¾ú½À´Ï´Ù.");
+				System.out.println("ì „ì†¡ì´ ì¢…ë£Œë˜ì—ˆìŠµë‹ˆë‹¤.");
 			} catch (IOException e) {
-				// TODO ÀÚµ¿ »ı¼ºµÈ catch ºí·Ï
+				// TODO ìë™ ìƒì„±ëœ catch ë¸”ë¡
 				e.printStackTrace();
 			}
 		}
