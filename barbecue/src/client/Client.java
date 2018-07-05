@@ -21,10 +21,10 @@ public class Client {
 		try {
 			properties.load(new FileInputStream("./src/common/port.prop"));
 		} catch (FileNotFoundException e) {
-			// TODO ÀÚµ¿ »ı¼ºµÈ catch ºí·Ï
+			// TODO ìë™ ìƒì„±ëœ catch ë¸”ë¡
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO ÀÚµ¿ »ı¼ºµÈ catch ºí·Ï
+			// TODO ìë™ ìƒì„±ëœ catch ë¸”ë¡
 			e.printStackTrace();
 		}
 		this.chatPortNum = Integer.parseInt(properties.getProperty("chat"));
@@ -41,7 +41,7 @@ public class Client {
 		try {
 			socket = new Socket(serverIp, chatPortNum);
 			FileSocket = new Socket(serverIp, filePortNum);
-			System.out.println("¼­¹ö¿¡ ¿¬°áµÇ¾ú½À´Ï´Ù.");
+			System.out.println("ì„œë²„ì— ì—°ê²°ë˜ì—ˆìŠµë‹ˆë‹¤.");
 
 			ClientSender sd = new ClientSender(socket, FileSocket);
 			Thread sender = new Thread(sd);
@@ -51,8 +51,9 @@ public class Client {
 			receiver.start();
 
 		} catch (IOException e) {
-			// TODO ÀÚµ¿ »ı¼ºµÈ catch ºí·Ï
+			// TODO ìë™ ìƒì„±ëœ catch ë¸”ë¡
 			e.printStackTrace();
 		}
 	}
 } // class
+ 
