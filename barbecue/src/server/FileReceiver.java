@@ -8,7 +8,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-public class FileReceiver extends Thread {
+public class FileReceiver extends Thread { 
 	BufferedInputStream in;
 	BufferedOutputStream bos;
 	DataOutputStream out;
