@@ -2,7 +2,7 @@ package client;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.DataOutputStream;
+import java.io.DataOutputStream; 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -16,14 +16,14 @@ public class FileSender extends Thread {
 	String src;
 	boolean sys;
 
-	FileSender(String filename, DataOutputStream out, BufferedOutputStream Fileout) {// À¯Àú¿ë
+	FileSender(String filename, DataOutputStream out, BufferedOutputStream Fileout) {// ìœ ì €ìš©
 		this.out = out;
 		this.Fileout = Fileout;
 		this.filename = filename;
 		this.src = filename;
 	}
 
-	public FileSender(String filename, String roomname, DataOutputStream out, BufferedOutputStream Fileout) {// ¼­¹ö¿ë
+	public FileSender(String filename, String roomname, DataOutputStream out, BufferedOutputStream Fileout) {// ì„œë²„ìš©
 		this.out = out;
 		this.Fileout = Fileout;
 		this.filename = filename;
@@ -35,21 +35,21 @@ public class FileSender extends Thread {
 		if (file.exists()) {
 			try {
 				FileSend();
-				System.out.println(filename + "Àü¼Û ÁØºñ ¿Ï·á");
-				out.writeUTF("¤Ø" + filename + "¤Ø" + file.length());
+				System.out.println(filename + "ì „ì†¡ ì¤€ë¹„ ì™„ë£Œ");
+				out.writeUTF("ã…¨" + filename + "ã…¨" + file.length());
 			} catch (IOException e) {
-				// TODO ÀÚµ¿ »ı¼ºµÈ catch ºí·Ï
+				// TODO ìë™ ìƒì„±ëœ catch ë¸”ë¡
 				e.printStackTrace();
 			}
 		} else {
-			System.out.println("Á¸ÀçÇÏÁö ¾Ê´Â ÆÄÀÏÀÔ´Ï´Ù.");
+			System.out.println("ì¡´ì¬í•˜ì§€ ì•ŠëŠ” íŒŒì¼ì…ë‹ˆë‹¤.");
 		}
 		try {
 			sleep(300000);
 		} catch (InterruptedException e) {
-			System.out.println(filename + "Àü¼Û ¿Ï·á. ÆÄÀÏ Àü¼Û ½º·¹µå¸¦ ¸¶Ä¨´Ï´Ù.");
+			System.out.println(filename + "ì „ì†¡ ì™„ë£Œ. íŒŒì¼ ì „ì†¡ ìŠ¤ë ˆë“œë¥¼ ë§ˆì¹©ë‹ˆë‹¤.");
 		}
-		// System.out.println("ÆÄÀÏ Àü¼Û¿ë ½º·¹µå ¸¶Ä§");
+		// System.out.println("íŒŒì¼ ì „ì†¡ìš© ìŠ¤ë ˆë“œ ë§ˆì¹¨");
 		// interrupt();
 	} // run()
 
@@ -58,14 +58,14 @@ public class FileSender extends Thread {
 		byte[] bytes = new byte[1024];
 		int len = 0;
 		try {
-			// ÆÄÀÏ ³»¿ë
+			// íŒŒì¼ ë‚´ìš©
 			int total = 0;
 			while ((len = bin.read(bytes, 0, bytes.length)) != -1) {
 				Fileout.write(bytes, 0, len);
 				total += len;
 			}
 			Fileout.flush();
-			System.out.println("Àü¼Û: " + filename + "(" + total + ")bytes Àü¼Û ¿Ï·áµÊ");
+			System.out.println("ì „ì†¡: " + filename + "(" + total + ")bytes ì „ì†¡ ì™„ë£Œë¨");
 
 		} catch (IOException e) {
 			e.printStackTrace();
