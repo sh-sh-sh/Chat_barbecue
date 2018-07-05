@@ -16,7 +16,7 @@ public class FileReceiver extends Thread {
 	String src;
 	int size;
 
-	FileReceiver(String filename, int size, String roomname, BufferedInputStream in, DataOutputStream out) {// ¼­¹ö¿ë
+	FileReceiver(String filename, int size, String roomname, BufferedInputStream in, DataOutputStream out) {// ì„œë²„ìš©
 		this.filename = filename;
 		this.in = in;
 		this.src = "D://barbecue//" + roomname + "//" + filename;
@@ -24,7 +24,7 @@ public class FileReceiver extends Thread {
 		this.size = size;
 	}
 
-	public FileReceiver(String filename, int size, BufferedInputStream in, DataOutputStream out) {// »ç¿ëÀÚ¿ë
+	public FileReceiver(String filename, int size, BufferedInputStream in, DataOutputStream out) {// ì‚¬ìš©ììš©
 		this.filename = filename;
 		this.in = in;
 		this.src = "D://barbecue//" + filename;
@@ -34,33 +34,33 @@ public class FileReceiver extends Thread {
 
 	public void run() {
 		File file = new File(src);
-		if (!file.getParentFile().exists()) {// ÆÄÀÏÀ» »ı¼ºÇÒ Æú´õ°¡ Á¸ÀçÇÏÁö ¾ÊÀ¸¸é
-			if (file.getParentFile().mkdir()) {// Æú´õ¸¦ »ı¼ºÇÑ´Ù
-				// System.out.println("Æú´õ »ı¼º ¼º°ø 1");
-			} else {// Æú´õ »ı¼º¿¡ ½ÇÆĞÇßÀ¸¸é
-				if (!file.getParentFile().getParentFile().exists()) {// ±× Æú´õÀÇ »óÀ§ Æú´õ°¡ Á¸ÀçÇÏÁö ¾ÊÀ¸¸é
-					if (file.getParentFile().getParentFile().mkdir()) {// »óÀ§ Æú´õ¸¦ »ı¼ºÇÏ°í
-						// System.out.println("Æú´õ »ı¼º ¼º°ø 2");
-						if (file.getParentFile().mkdir()) {// Æú´õ¸¦ »ı¼ºÇÑ´Ù
-							// System.out.println("Æú´õ »ı¼º ¼º°ø 3");
+		if (!file.getParentFile().exists()) {// íŒŒì¼ì„ ìƒì„±í•  í´ë”ê°€ ì¡´ì¬í•˜ì§€ ì•Šìœ¼ë©´
+			if (file.getParentFile().mkdir()) {// í´ë”ë¥¼ ìƒì„±í•œë‹¤
+				// System.out.println("í´ë” ìƒì„± ì„±ê³µ 1");
+			} else {// í´ë” ìƒì„±ì— ì‹¤íŒ¨í–ˆìœ¼ë©´
+				if (!file.getParentFile().getParentFile().exists()) {// ê·¸ í´ë”ì˜ ìƒìœ„ í´ë”ê°€ ì¡´ì¬í•˜ì§€ ì•Šìœ¼ë©´
+					if (file.getParentFile().getParentFile().mkdir()) {// ìƒìœ„ í´ë”ë¥¼ ìƒì„±í•˜ê³ 
+						// System.out.println("í´ë” ìƒì„± ì„±ê³µ 2");
+						if (file.getParentFile().mkdir()) {// í´ë”ë¥¼ ìƒì„±í•œë‹¤
+							// System.out.println("í´ë” ìƒì„± ì„±ê³µ 3");
 						} else {
-							System.out.println("°æ·Î »ı¼º ½ÇÆĞ 02 - »óÀ§ µğ·ºÅä¸®¸¦ »ı¼ºÇßÀ¸³ª µğ·ºÅä¸® »ı¼º ½ÇÆĞ");
+							System.out.println("ê²½ë¡œ ìƒì„± ì‹¤íŒ¨ 02 - ìƒìœ„ ë””ë ‰í† ë¦¬ë¥¼ ìƒì„±í–ˆìœ¼ë‚˜ ë””ë ‰í† ë¦¬ ìƒì„± ì‹¤íŒ¨");
 						}
 					} else {
-						System.out.println("°æ·Î »ı¼º ½ÇÆĞ 03 - »óÀ§ µğ·ºÅä¸® »ı¼º ºÒ°¡");
-					}
-				} else {// ÇØ´ç Æú´õÀÇ »óÀ§ Æú´õ°¡ Á¸ÀçÇÏ´Âµ¥µµ ¾ÈµÆÀ¸¸é
-					System.out.println("°æ·Î »ı¼º ½ÇÆĞ 01 - »óÀ§ µğ·ºÅä¸® ÀÌ¹Ì Á¸ÀçÇÔ");
+						System.out.println("ê²½ë¡œ ìƒì„± ì‹¤íŒ¨ 03 - ìƒìœ„ ë””ë ‰í† ë¦¬ ìƒì„± ë¶ˆê°€");
+					} 
+				} else {// í•´ë‹¹ í´ë”ì˜ ìƒìœ„ í´ë”ê°€ ì¡´ì¬í•˜ëŠ”ë°ë„ ì•ˆëìœ¼ë©´
+					System.out.println("ê²½ë¡œ ìƒì„± ì‹¤íŒ¨ 01 - ìƒìœ„ ë””ë ‰í† ë¦¬ ì´ë¯¸ ì¡´ì¬í•¨");
 				}
 			}
 		} else {
-			// System.out.println("°æ·Î ÀÌ¹Ì Á¸ÀçÇÔ");
+			// System.out.println("ê²½ë¡œ ì´ë¯¸ ì¡´ì¬í•¨");
 		}
 		byte[] content = new byte[1024];
 		try {
 			bos = new BufferedOutputStream(new FileOutputStream(src));
 		} catch (FileNotFoundException e1) {
-			// TODO ÀÚµ¿ »ı¼ºµÈ catch ºí·Ï
+			// TODO ìë™ ìƒì„±ëœ catch ë¸”ë¡
 			e1.printStackTrace();
 		}
 		int len = 0;
@@ -70,12 +70,12 @@ public class FileReceiver extends Thread {
 				len = in.read(content, 0, content.length);
 				bos.write(content, 0, len);
 				total += len;
-				System.out.println(filename + " ´Ù¿î·Îµå ÁøÇàÁß: " + total + "bytes ´Ù¿î·Îµå µÊ...");
+				System.out.println(filename + " ë‹¤ìš´ë¡œë“œ ì§„í–‰ì¤‘: " + total + "bytes ë‹¤ìš´ë¡œë“œ ë¨...");
 			}
 			bos.flush();
 			bos.close();
-			System.out.println(filename + "(" + total + "bytes) ´Ù¿î·Îµå ¿Ï·á");
-			out.writeUTF("¤á");// ÆÄÀÏ Àü¼ÛÀÚ¿¡°Ô ÆÄÀÏ ´Ù¿î ¿Ï·áÇßÀ½À» ¾Ë¸²
+			System.out.println(filename + "(" + total + "bytes) ë‹¤ìš´ë¡œë“œ ì™„ë£Œ");
+			out.writeUTF("ã…±");// íŒŒì¼ ì „ì†¡ìì—ê²Œ íŒŒì¼ ë‹¤ìš´ ì™„ë£Œí–ˆìŒì„ ì•Œë¦¼
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
