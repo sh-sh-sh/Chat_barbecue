@@ -29,21 +29,21 @@ public class ClientReceiver extends Thread {
 		while (in != null) {
 			try {
 				String msg = in.readUTF();
-				if (msg.equals("¤é")) {// ÇÁ·Î±×·¥ Á¾·á
+				if (msg.equals("ã…¹")) {// í”„ë¡œê·¸ë¨ ì¢…ë£Œ
 					System.exit(0);
-				} else if (msg.startsWith("¤Ø")) {// ÆÄÀÏ ¹Ş±â
-					String[] cmd = msg.split("¤Ø");
+				} else if (msg.startsWith("ã…¨")) {// íŒŒì¼ ë°›ê¸°
+					String[] cmd = msg.split("ã…¨");
 					FileReceiver fr = new FileReceiver(cmd[1], Integer.parseInt(cmd[2]), Filein, sender.out);
-					fr.start();
-				} else if (msg.equals("¤á")) {// »ó´ë°¡ ÆÄÀÏ ´Ù¿î ¿Ï·á
+					fr.start(); 
+				} else if (msg.equals("ã…±")) {// ìƒëŒ€ê°€ íŒŒì¼ ë‹¤ìš´ ì™„ë£Œ
 					if (sender.filesender != null) {
 						sender.filesender.interrupt();
 						while (sender.filesender.isAlive()) {
 						}
 						sender.filesender = null;
-						System.out.println("ÆÄÀÏ»÷´õ ÃÊ±âÈ­ ¿Ï·á");
+						System.out.println("íŒŒì¼ìƒŒë” ì´ˆê¸°í™” ì™„ë£Œ");
 					} else {
-						System.out.println("ÆÄÀÏ Àü¼Û ´İÈû ¿¡·¯");
+						System.out.println("íŒŒì¼ ì „ì†¡ ë‹«í˜ ì—ëŸ¬");
 					}
 				} else {
 					System.out.println(msg);
@@ -56,9 +56,9 @@ public class ClientReceiver extends Thread {
 			Filein.close();
 			socket.close();
 			FileSocket.close();
-			System.out.println("¼ö½ÅÀÌ Á¾·áµÇ¾ú½À´Ï´Ù.");
+			System.out.println("ìˆ˜ì‹ ì´ ì¢…ë£Œë˜ì—ˆìŠµë‹ˆë‹¤.");
 		} catch (IOException e) {
-			// TODO ÀÚµ¿ »ı¼ºµÈ catch ºí·Ï
+			// TODO ìë™ ìƒì„±ëœ catch ë¸”ë¡
 			e.printStackTrace();
 		}
 	} // run
