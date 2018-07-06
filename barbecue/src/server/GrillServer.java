@@ -1,14 +1,14 @@
 package server;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.FileNotFoundException; 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Properties;
 
 /*
- * 1.client·ÎºÎÅÍ Á¢¼ÓÀ» ¹ŞÀ½
+ * 1.clientë¡œë¶€í„° ì ‘ì†ì„ ë°›ìŒ
  * -2prots(chatting/file)
  */
 public class GrillServer {
@@ -28,10 +28,10 @@ public class GrillServer {
 		try {
 			properties.load(new FileInputStream("./src/common/port.prop"));
 		} catch (FileNotFoundException e) {
-			// TODO ÀÚµ¿ »ı¼ºµÈ catch ºí·Ï
+			// TODO ìë™ ìƒì„±ëœ catch ë¸”ë¡
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO ÀÚµ¿ »ı¼ºµÈ catch ºí·Ï
+			// TODO ìë™ ìƒì„±ëœ catch ë¸”ë¡
 			e.printStackTrace();
 		}
 		this.chatPortNum = Integer.parseInt(properties.getProperty("chat"));
@@ -39,19 +39,19 @@ public class GrillServer {
 		rooms = new Rooms();
 		// chatRooms = Collections.synchronizedMap(new HashMap<String, ChatRoom>());
 
-		// ´ë±â¹æ »ı¼º
+		// ëŒ€ê¸°ë°© ìƒì„±
 
 	}
 
-	// °¢ Æ÷Æ®º°·Î serversocketÀ» »ı¼ºÇÏ°í,
-	// accept¸¦ ±â´Ù·Á¾ß ÇÔ.
+	// ê° í¬íŠ¸ë³„ë¡œ serversocketì„ ìƒì„±í•˜ê³ ,
+	// acceptë¥¼ ê¸°ë‹¤ë ¤ì•¼ í•¨.
 	public void start() {
 		ServerSocket chatSS, FileSS;
 		Socket chatSocket, fileSocket;
 		try {
 			chatSS = new ServerSocket(chatPortNum);
 			FileSS = new ServerSocket(filePortNum);
-			System.out.println("¼­¹ö »ı¼º ¿Ï·á");
+			System.out.println("ì„œë²„ ìƒì„± ì™„ë£Œ");
 			while (true) {
 				chatSocket = chatSS.accept();
 				fileSocket = FileSS.accept();
@@ -61,11 +61,11 @@ public class GrillServer {
 				user.setFileSocket(fileSocket);
 				user.setIp_port(chatSocket.getInetAddress().toString() + ":" + String.valueOf(chatSocket.getPort()));
 
-				System.out.println("[" + chatSocket.getInetAddress() + ":" + chatSocket.getPort() + "]" + "¿¡¼­ Á¢¼ÓÇÏ¿´½À´Ï´Ù.");
+				System.out.println("[" + chatSocket.getInetAddress() + ":" + chatSocket.getPort() + "]" + "ì—ì„œ ì ‘ì†í•˜ì˜€ìŠµë‹ˆë‹¤.");
 
-				// °¢ Å¬¶óÀÌ¾ğÆ® º°·Î ¼ÒÄÏÀ» °¡Áö°í Ã³¸®ÇÏ´Â ¹«¾ù
+				// ê° í´ë¼ì´ì–¸íŠ¸ ë³„ë¡œ ì†Œì¼“ì„ ê°€ì§€ê³  ì²˜ë¦¬í•˜ëŠ” ë¬´ì—‡
 
-				// Á¢¼Ó À¯Àú¸¦ ´ë±â¹æ¿¡ Á¶ÀÎ½ÃÅ´\
+				// ì ‘ì† ìœ ì €ë¥¼ ëŒ€ê¸°ë°©ì— ì¡°ì¸ì‹œí‚´\
 				// chatRooms.get(0).addMember(user);
 
 				ServerReceiver receiver = new ServerReceiver(user, rooms);
@@ -74,7 +74,7 @@ public class GrillServer {
 			}
 
 		} catch (IOException e) {
-			// TODO ÀÚµ¿ »ı¼ºµÈ catch ºí·Ï
+			// TODO ìë™ ìƒì„±ëœ catch ë¸”ë¡
 			e.printStackTrace();
 		}
 
