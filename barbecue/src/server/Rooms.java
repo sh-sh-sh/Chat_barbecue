@@ -6,7 +6,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
+import java.util.Set; 
 
 import client.FileSender;
 
@@ -16,7 +16,7 @@ public class Rooms {
 
 	public Rooms() {
 		chatRooms = Collections.synchronizedMap(new HashMap<String, ChatRoom>());
-		ChatRoom chatroom = new ChatRoom("__waitting__", "__admin__");// ÃÊ±â»ı¼º½Ã ´ë±â¹æ »ı¼ºÇØ Ãß°¡
+		ChatRoom chatroom = new ChatRoom("__waitting__", "__admin__");// ì´ˆê¸°ìƒì„±ì‹œ ëŒ€ê¸°ë°© ìƒì„±í•´ ì¶”ê°€
 		chatRooms.put(chatroom.getName(), chatroom);
 	}
 
@@ -28,7 +28,7 @@ public class Rooms {
 		return chatRooms.get(roomname).removeMember(username);
 	}
 
-	private void send(String msg, User user) throws IOException {// »ç¿ëÀÚ¿¡°Ô Àü´ŞÇÏ´Â ¸Ş¼¼Áö¿¡ ¾²´Â ¸Ş¼Òµå ÁÙÀÎ°Å
+	private void send(String msg, User user) throws IOException {// ì‚¬ìš©ìì—ê²Œ ì „ë‹¬í•˜ëŠ” ë©”ì„¸ì§€ì— ì“°ëŠ” ë©”ì†Œë“œ ì¤„ì¸ê±°
 		user.getChatOut().writeUTF(msg);
 	}
 
@@ -36,38 +36,38 @@ public class Rooms {
 		user.setCurrentRoom(chatRooms.get(roomname));
 	}
 
-	boolean checkName(String roomName, User user) throws IOException {// ´Ğ³×ÀÓÀ» ¹Ş¾Æ¼­ Á¦¾à¿¡ °É¸®´ÂÁö Ã¼Å©
-		send("	* »ç¿ëÇÒ ´Ğ³×ÀÓÀ» ÀÔ·ÂÇÏ¼¼¿ä.", user);
-		send("	* Æ¯¼ö¹®ÀÚ ÀÔ·Â ºÒ°¡´ÉÇÏ¸ç, 10±ÛÀÚ±îÁö ÀÔ·Â °¡´ÉÇÕ´Ï´Ù.", user);
+	boolean checkName(String roomName, User user) throws IOException {// ë‹‰ë„¤ì„ì„ ë°›ì•„ì„œ ì œì•½ì— ê±¸ë¦¬ëŠ”ì§€ ì²´í¬
+		send("	* ì‚¬ìš©í•  ë‹‰ë„¤ì„ì„ ì…ë ¥í•˜ì„¸ìš”.", user);
+		send("	* íŠ¹ìˆ˜ë¬¸ì ì…ë ¥ ë¶ˆê°€ëŠ¥í•˜ë©°, 10ê¸€ìê¹Œì§€ ì…ë ¥ ê°€ëŠ¥í•©ë‹ˆë‹¤.", user);
 		String clientName = user.getChatIn().readUTF();
-		if (clientName.matches("[0-9|a-z|A-Z|¤¡-¤¾|¤¿-¤Ó|°¡-Èş]*") && clientName.length() <= 10) {// ´Ğ³×ÀÓ Á¦¾à¿¡ °É¸®Áö ¾ÊÀ» °æ¿ì
-			return overlapCheck(clientName, roomName, user);// Áßº¹°Ë»ç
-		} else {// Æ¯¼ö¹®ÀÚ°¡ µé¾î°¬À» °æ¿ì
-			send("	* SYSTEM : Àß¸øµÈ ÀÔ·ÂÀÔ´Ï´Ù.", user);
+		if (clientName.matches("[0-9|a-z|A-Z|ã„±-ã…|ã…-ã…£|ê°€-í]*") && clientName.length() <= 10) {// ë‹‰ë„¤ì„ ì œì•½ì— ê±¸ë¦¬ì§€ ì•Šì„ ê²½ìš°
+			return overlapCheck(clientName, roomName, user);// ì¤‘ë³µê²€ì‚¬
+		} else {// íŠ¹ìˆ˜ë¬¸ìê°€ ë“¤ì–´ê°”ì„ ê²½ìš°
+			send("	* SYSTEM : ì˜ëª»ëœ ì…ë ¥ì…ë‹ˆë‹¤.", user);
 			return checkName(roomName, user);
 		}
 	}
 
-	synchronized boolean overlapCheck(String name, String roomName, User user) throws IOException {// ´Ğ³×ÀÓ Áßº¹°Ë»ç
-		if (chatRooms.get(roomName).getUsers().size() == 0) {// ÇØ´ç ¹æ À¯Àú°¡ 0ÀÎ°æ¿ì Áßº¹°Ë»ç ¾ÈÇÔ(ex:´ë±â¹æ ÃÖÃÊ Á¢¼ÓÀÚ)
+	synchronized boolean overlapCheck(String name, String roomName, User user) throws IOException {// ë‹‰ë„¤ì„ ì¤‘ë³µê²€ì‚¬
+		if (chatRooms.get(roomName).getUsers().size() == 0) {// í•´ë‹¹ ë°© ìœ ì €ê°€ 0ì¸ê²½ìš° ì¤‘ë³µê²€ì‚¬ ì•ˆí•¨(ex:ëŒ€ê¸°ë°© ìµœì´ˆ ì ‘ì†ì)
 			user.setName(name);
 			return true;
 		}
 		Set<String> set = chatRooms.get(roomName).getUsers().keySet();
 		Iterator<String> it = set.iterator();
 		while (it.hasNext()) {
-			if (name.equals(it.next())) {// ¹æ¿¡ Áßº¹ ´Ğ³×ÀÓÀÌ ÀÖÀ» °æ¿ì
-				send("	* SYSTEM : ¹æ¿¡ Áßº¹µÈ ÀÌ¸§ÀÌ ÀÖ½À´Ï´Ù. ", user);
+			if (name.equals(it.next())) {// ë°©ì— ì¤‘ë³µ ë‹‰ë„¤ì„ì´ ìˆì„ ê²½ìš°
+				send("	* SYSTEM : ë°©ì— ì¤‘ë³µëœ ì´ë¦„ì´ ìˆìŠµë‹ˆë‹¤. ", user);
 				return checkName(roomName, user);
 			}
-		} // ¹æ¿¡ Áßº¹µÈ ÀÌ¸§ÀÌ ¾ø¾úÀ» °æ¿ì
+		} // ë°©ì— ì¤‘ë³µëœ ì´ë¦„ì´ ì—†ì—ˆì„ ê²½ìš°
 		user.setName(name);
 		return true;
 	}
 
-	synchronized void sendToAll(String msg, User user) throws IOException {// user°¡ ÀÖ´Â ¹æÀÇ ¸ğµç À¯Àúµé¿¡°Ô ¸Ş¼¼Áö º¸³¿
-		if (msg.equals("¤é") || msg.startsWith("¤Ø")) {
-			send("ÇØ´ç Æ¯¼ö¹®ÀÚ´Â »ç¿ëÀÌ ºÒ°¡´ÉÇÕ´Ï´Ù.", user);
+	synchronized void sendToAll(String msg, User user) throws IOException {// userê°€ ìˆëŠ” ë°©ì˜ ëª¨ë“  ìœ ì €ë“¤ì—ê²Œ ë©”ì„¸ì§€ ë³´ëƒ„
+		if (msg.equals("ã…¹") || msg.startsWith("ã…¨")) {
+			send("í•´ë‹¹ íŠ¹ìˆ˜ë¬¸ìëŠ” ì‚¬ìš©ì´ ë¶ˆê°€ëŠ¥í•©ë‹ˆë‹¤.", user);
 		}
 		Iterator<String> it = user.getCurrentRoom().getUsers().keySet().iterator();
 
@@ -84,29 +84,29 @@ public class Rooms {
 		} // while
 	}
 
-	String processCmd(String cmd, User user) throws IOException {// Ä¿¸Çµå Ã³¸®
+	String processCmd(String cmd, User user) throws IOException {// ì»¤ë§¨ë“œ ì²˜ë¦¬
 		String[] tokens = cmd.split("[ ]+");
 		if (tokens[0].equals("?")) {
 			send(bar, user);
-			send("	*** ¸í·É¾î ¸ñ·Ï ***", user);
-			send("/create ¹æÀÌ¸§ ºñ¹Ğ¹øÈ£(¼±ÅÃ) - ¹æ »ı¼º *ÁÖÀÇ:¹æ ÀÌ¸§Àº Áßº¹ÀÌ ¾Æ´Ñ °ø¹é, Æ¯¼ö¹®ÀÚ Á¦¿Ü 10ÀÚ¸¸ ÀÔ·Â °¡´É", user);
-			send("/list - ¹æ ¸®½ºÆ® ºÒ·¯¿À±â", user);
-			send("/exit - ¹æ ³ª°¡±â(´ë±â¹æ¿¡¼­´Â ºÒ°¡´É)", user);
-			send("/join µé¾î°¥¹æÀÌ¸§ ºñ¹Ğ¹øÈ£ - ¹æ µé¾î°¡±â", user);
-			send("/users - ÇØ´ç ¹æ À¯Àú ¸ñ·Ï º¸±â", user);
-			send("/owner - ÇØ´ç ¹æ ¹æÀå º¸±â", user);
-			send("/sysexit - ÇÁ·Î±×·¥ Á¾·á", user);
-			send("/filelist - Á¢¼ÓÇÑ ¹æ¿¡ ¾÷·ÎµåµÈ ÆÄÀÏ º¸±â", user);
-			send("/fileup ÆÄÀÏÀÌ¸§ - Á¢¼ÓÇÑ ¹æ¿¡ ÆÄÀÏ º¸³»±â", user);
-			send("/filedown ÆÄÀÏÀÌ¸§ - Á¢¼ÓÇÑ ¹æ¿¡ Àü¼ÛµÈ ÆÄÀÏ ¹Ş±â (¹ŞÀº ÆÄÀÏÀº D://barbecue Æú´õ¿¡ ÀúÀåµË´Ï´Ù.)", user);
-			send("/waitusers -´ë±â¹æ À¯Àú ¸ñ·Ï º¸±â", user);
-			send("/invite À¯Àú¸í -À¯Àú ÃÊ´ë(´ë±â¹æ¿¡ ÀÖ´Â À¯Àú¸¸ ÃÊ´ë °¡´É)", user);
-			send("/y ÃÊ´ë°¡ ÀÖÀ¸¸é °¡Àå ÃÖ±ÙÀÇ ÃÊ´ë°¡ ½Â¶ôµÊ", user);
-			send("/n ÃÊ´ë¸¦ °ÅÀıÇÔ", user);
-			send("/setpw ºñ¹Ğ¹øÈ£ - ÇöÀç ¹æ ºñ¹Ğ¹øÈ£ ¼³Á¤(¹æÀå¸¸ °¡´É)", user);
-			send("/kick À¯ÀúÀÌ¸§ - ÇöÀç ¹æ À¯Àú °­Åğ(¹æÀå¸¸ °¡´É)", user);
-			send("/headchange À¯ÀúÀÌ¸§ - ÇØ´ç À¯Àú¿¡°Ô ¹æÀå ³Ñ±â±â(¹æÀå¸¸ °¡´É)", user);
-			send("/destroy - ÇöÀç ¹æ »èÁ¦(¹æÀå¸¸ °¡´É)", user);
+			send("	*** ëª…ë ¹ì–´ ëª©ë¡ ***", user);
+			send("/create ë°©ì´ë¦„ ë¹„ë°€ë²ˆí˜¸(ì„ íƒ) - ë°© ìƒì„± *ì£¼ì˜:ë°© ì´ë¦„ì€ ì¤‘ë³µì´ ì•„ë‹Œ ê³µë°±, íŠ¹ìˆ˜ë¬¸ì ì œì™¸ 10ìë§Œ ì…ë ¥ ê°€ëŠ¥", user);
+			send("/list - ë°© ë¦¬ìŠ¤íŠ¸ ë¶ˆëŸ¬ì˜¤ê¸°", user);
+			send("/exit - ë°© ë‚˜ê°€ê¸°(ëŒ€ê¸°ë°©ì—ì„œëŠ” ë¶ˆê°€ëŠ¥)", user);
+			send("/join ë“¤ì–´ê°ˆë°©ì´ë¦„ ë¹„ë°€ë²ˆí˜¸ - ë°© ë“¤ì–´ê°€ê¸°", user);
+			send("/users - í•´ë‹¹ ë°© ìœ ì € ëª©ë¡ ë³´ê¸°", user);
+			send("/owner - í•´ë‹¹ ë°© ë°©ì¥ ë³´ê¸°", user);
+			send("/sysexit - í”„ë¡œê·¸ë¨ ì¢…ë£Œ", user);
+			send("/filelist - ì ‘ì†í•œ ë°©ì— ì—…ë¡œë“œëœ íŒŒì¼ ë³´ê¸°", user);
+			send("/fileup íŒŒì¼ì´ë¦„ - ì ‘ì†í•œ ë°©ì— íŒŒì¼ ë³´ë‚´ê¸°", user);
+			send("/filedown íŒŒì¼ì´ë¦„ - ì ‘ì†í•œ ë°©ì— ì „ì†¡ëœ íŒŒì¼ ë°›ê¸° (ë°›ì€ íŒŒì¼ì€ D://barbecue í´ë”ì— ì €ì¥ë©ë‹ˆë‹¤.)", user);
+			send("/waitusers -ëŒ€ê¸°ë°© ìœ ì € ëª©ë¡ ë³´ê¸°", user);
+			send("/invite ìœ ì €ëª… -ìœ ì € ì´ˆëŒ€(ëŒ€ê¸°ë°©ì— ìˆëŠ” ìœ ì €ë§Œ ì´ˆëŒ€ ê°€ëŠ¥)", user);
+			send("/y ì´ˆëŒ€ê°€ ìˆìœ¼ë©´ ê°€ì¥ ìµœê·¼ì˜ ì´ˆëŒ€ê°€ ìŠ¹ë½ë¨", user);
+			send("/n ì´ˆëŒ€ë¥¼ ê±°ì ˆí•¨", user);
+			send("/setpw ë¹„ë°€ë²ˆí˜¸ - í˜„ì¬ ë°© ë¹„ë°€ë²ˆí˜¸ ì„¤ì •(ë°©ì¥ë§Œ ê°€ëŠ¥)", user);
+			send("/kick ìœ ì €ì´ë¦„ - í˜„ì¬ ë°© ìœ ì € ê°•í‡´(ë°©ì¥ë§Œ ê°€ëŠ¥)", user);
+			send("/headchange ìœ ì €ì´ë¦„ - í•´ë‹¹ ìœ ì €ì—ê²Œ ë°©ì¥ ë„˜ê¸°ê¸°(ë°©ì¥ë§Œ ê°€ëŠ¥)", user);
+			send("/destroy - í˜„ì¬ ë°© ì‚­ì œ(ë°©ì¥ë§Œ ê°€ëŠ¥)", user);
 			send(bar, user);
 			return null;
 		} else if (tokens[0].equals("create")) {
@@ -144,18 +144,18 @@ public class Rooms {
 		} else if (tokens[0].equals("headchange")) {
 			return headChange(tokens, user);
 		} else {
-			return "	* ¿À·ù:À¯È¿ÇÏÁö ¾ÊÀº ¸í·É¾î";
+			return "	* ì˜¤ë¥˜:ìœ íš¨í•˜ì§€ ì•Šì€ ëª…ë ¹ì–´";
 		}
 	}
 
 	private String FileList(String[] tokens, User user) throws IOException {
 		if (user.getCurrentRoom().getFiles().size() == 0) {
-			return "	* " + user.getCurrentRoom().getName() + "¿¡ ¾÷·ÎµåµÈ ÆÄÀÏÀÌ ¾ø½À´Ï´Ù.";
+			return "	* " + user.getCurrentRoom().getName() + "ì— ì—…ë¡œë“œëœ íŒŒì¼ì´ ì—†ìŠµë‹ˆë‹¤.";
 		}
 		Set<String> set = user.getCurrentRoom().getFiles().keySet();
 		Iterator<String> it = set.iterator();
 		send(bar, user);
-		send("	*** " + user.getCurrentRoom().getName() + "ÀÇ  ÆÄÀÏ ¸ñ·Ï ***", user);
+		send("	*** " + user.getCurrentRoom().getName() + "ì˜  íŒŒì¼ ëª©ë¡ ***", user);
 		while (it.hasNext()) {
 			send(it.next(), user);
 		}
@@ -167,7 +167,7 @@ public class Rooms {
 		Set<String> set = chatRooms.get("__waitting__").getUsers().keySet();
 		Iterator<String> it = set.iterator();
 		send(bar, user);
-		send("	*** " + chatRooms.get("__waitting__").getName() + "ÀÇ À¯Àú ¸ñ·Ï ***", user);
+		send("	*** " + chatRooms.get("__waitting__").getName() + "ì˜ ìœ ì € ëª©ë¡ ***", user);
 		while (it.hasNext()) {
 			send(it.next(), user);
 		}
@@ -176,43 +176,43 @@ public class Rooms {
 	}
 
 	private String FileReceive(String[] tokens, User user) throws IOException {
-		if (user.getCurrentRoom().getFiles().containsKey(tokens[1])) {// ÇØ´ç ÀÌ¸§ÀÇ ÆÄÀÏÀÌ Á¸ÀçÇÏ¸é
+		if (user.getCurrentRoom().getFiles().containsKey(tokens[1])) {// í•´ë‹¹ ì´ë¦„ì˜ íŒŒì¼ì´ ì¡´ì¬í•˜ë©´
 			user.fs = new FileSender(tokens[1], user.getCurrentRoom().getName(), user.getChatOut(), user.getFileOut());
 			user.fs.start();
 		} else {
-			return "	* ¿À·ù : ÇØ´ç ÀÌ¸§À» °¡Áø ÆÄÀÏÀÌ Á¸ÀçÇÏÁö ¾Ê½À´Ï´Ù.";
+			return "	* ì˜¤ë¥˜ : í•´ë‹¹ ì´ë¦„ì„ ê°€ì§„ íŒŒì¼ì´ ì¡´ì¬í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤.";
 		}
 		return null;
 	}
 
-	synchronized private String invite(String[] tokens, User user) throws IOException {// ´ë±â½Ç¿¡ ÀÖ´Â À¯Àú¸¦ ÃÊ´ëÇÏ´Â ¸Ş¼­µå
-		if (chatRooms.get("__waitting__").getUsers().containsKey(tokens[1])) {// ´ë±â½Ç¿¡ ÇØ´ç À¯Àú°¡ ÀÖÀ¸¸é
+	synchronized private String invite(String[] tokens, User user) throws IOException {// ëŒ€ê¸°ì‹¤ì— ìˆëŠ” ìœ ì €ë¥¼ ì´ˆëŒ€í•˜ëŠ” ë©”ì„œë“œ
+		if (chatRooms.get("__waitting__").getUsers().containsKey(tokens[1])) {// ëŒ€ê¸°ì‹¤ì— í•´ë‹¹ ìœ ì €ê°€ ìˆìœ¼ë©´
 			User us = chatRooms.get("__waitting__").getUsers().get(tokens[1]);
-			us.setInvite(user.getCurrentRoom().getName());// ÇØ´ç À¯ÀúÀÇ intvite¿¡ ÃÊ´ëÇÑ À¯ÀúÀÇ ·ë³×ÀÓ ¼³Á¤
-			us.setInvitepw(user.getCurrentRoom().getPassword());// ºñ¹Ğ¹øÈ£µµ ¼³Á¤
-			us.getChatOut().writeUTF(user.getName() + "´ÔÀÌ " + user.getCurrentRoom().getName() + "¿¡¼­ ´ç½ÅÀ» ÃÊ´ëÇÏ¿´½À´Ï´Ù.");
-			us.getChatOut().writeUTF("ÃÊ´ë¸¦ ¼ö¶ôÇÏ·Á¸é /y °ÅÀıÇÏ·Á¸é /nÀ» ÀÔ·ÂÇÏ½Ê½Ã¿À.");
-			return "	* " + us.getName() + "´ÔÀ» ÃÊ´ëÇÏ¿´½À´Ï´Ù..";
+			us.setInvite(user.getCurrentRoom().getName());// í•´ë‹¹ ìœ ì €ì˜ intviteì— ì´ˆëŒ€í•œ ìœ ì €ì˜ ë£¸ë„¤ì„ ì„¤ì •
+			us.setInvitepw(user.getCurrentRoom().getPassword());// ë¹„ë°€ë²ˆí˜¸ë„ ì„¤ì •
+			us.getChatOut().writeUTF(user.getName() + "ë‹˜ì´ " + user.getCurrentRoom().getName() + "ì—ì„œ ë‹¹ì‹ ì„ ì´ˆëŒ€í•˜ì˜€ìŠµë‹ˆë‹¤.");
+			us.getChatOut().writeUTF("ì´ˆëŒ€ë¥¼ ìˆ˜ë½í•˜ë ¤ë©´ /y ê±°ì ˆí•˜ë ¤ë©´ /nì„ ì…ë ¥í•˜ì‹­ì‹œì˜¤.");
+			return "	* " + us.getName() + "ë‹˜ì„ ì´ˆëŒ€í•˜ì˜€ìŠµë‹ˆë‹¤..";
 		} else {
-			return "	* ¿À·ù : ´ë±â½Ç¿¡ ÇØ´ç À¯Àú°¡ Á¸ÀçÇÏÁö ¾Ê½À´Ï´Ù.";
+			return "	* ì˜¤ë¥˜ : ëŒ€ê¸°ì‹¤ì— í•´ë‹¹ ìœ ì €ê°€ ì¡´ì¬í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤.";
 		}
 	}
 
-	private String n(String[] tokens, User user) {// °¡Àå ÃÖ±Ù ÃÊ´ë¸¦ °ÅÀıÇÏ´Â ¸Ş¼­µå
+	private String n(String[] tokens, User user) {// ê°€ì¥ ìµœê·¼ ì´ˆëŒ€ë¥¼ ê±°ì ˆí•˜ëŠ” ë©”ì„œë“œ
 		user.setInvite(null);
 		user.setInvitepw(null);
-		return "	* ÃÊ´ë¸¦ °ÅÀıÇÏ¿´½À´Ï´Ù.";
+		return "	* ì´ˆëŒ€ë¥¼ ê±°ì ˆí•˜ì˜€ìŠµë‹ˆë‹¤.";
 	}
 
-	synchronized private String y(String[] tokens, User user) throws IOException {// °¡Àå ÃÖ±Ù ÃÊ´ë¸¦ ¼ö¶ôÇÏ´Â ¸Ş¼­µå
+	synchronized private String y(String[] tokens, User user) throws IOException {// ê°€ì¥ ìµœê·¼ ì´ˆëŒ€ë¥¼ ìˆ˜ë½í•˜ëŠ” ë©”ì„œë“œ
 		if (user.getInvite() == null) {
-			return "	* ¿À·ù : ÃÊ´ë¸¦ ÀÌ¹Ì °ÅÀıÇÏ¿´°Å³ª ÃÊ´ë¹ŞÀº ÀûÀÌ ¾ø½À´Ï´Ù.";
+			return "	* ì˜¤ë¥˜ : ì´ˆëŒ€ë¥¼ ì´ë¯¸ ê±°ì ˆí•˜ì˜€ê±°ë‚˜ ì´ˆëŒ€ë°›ì€ ì ì´ ì—†ìŠµë‹ˆë‹¤.";
 		}
-		if (chatRooms.containsKey(user.getInvite())) {// ÃÊ´ë¹ŞÀº ¹æÀÌ Á¸ÀçÇÏ¸é
+		if (chatRooms.containsKey(user.getInvite())) {// ì´ˆëŒ€ë°›ì€ ë°©ì´ ì¡´ì¬í•˜ë©´
 			tokens = new String[] { "", user.getInvite(), user.getInvitepw() };
-			return roomJoin(tokens, user);// Á¶ÀÎ½ÃÅ²´Ù
+			return roomJoin(tokens, user);// ì¡°ì¸ì‹œí‚¨ë‹¤
 		} else {
-			return "	* ¿À·ù : ÃÊ´ë¹ŞÀº ¹æÀÌ ÇöÀç Á¸ÀçÇÏÁö ¾Ê½À´Ï´Ù.";
+			return "	* ì˜¤ë¥˜ : ì´ˆëŒ€ë°›ì€ ë°©ì´ í˜„ì¬ ì¡´ì¬í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤.";
 		}
 	}
 
@@ -221,110 +221,110 @@ public class Rooms {
 	}
 
 	private String owner(String[] tokens, User user) {
-		return "	* " + user.getCurrentRoom().getName() + "ÀÇ ¹æÀå : " + user.getCurrentRoom().getOwner();
+		return "	* " + user.getCurrentRoom().getName() + "ì˜ ë°©ì¥ : " + user.getCurrentRoom().getOwner();
 	}
 
 	synchronized private String headChange(String[] tokens, User user) throws IOException {
-		// ´ÙÀ½ ÅäÅ« ¾øÀ¸¸é ·£´ıÀ¸·Î, ´ÙÀ½ ÅäÅ«ÀÌ ÀÖÀ¸¸é ÇØ´ç À¯Àú°¡ ÀÖ´ÂÁö È®ÀÎÇÏ°í ¾øÀ¸¸é ¿À·ù¸Ş¼¼Áö, ÀÖÀ¸¸é ¹æÀå º¯°æ
-		// TODO ÀÚµ¿ »ı¼ºµÈ ¸Ş¼Òµå ½ºÅÓ
-		if (isOwner(user)) {// ¸í·É¾î¸¦ È£ÃâÇÑ À¯Àú°¡ ¹æÀåÀÎÁö È®ÀÎ
-			if (tokens.length == 2) {// À¯Àú¸¦ ÁöÁ¤ÇÑ °æ¿ì
-				if (user.getCurrentRoom().getUsers().containsKey(tokens[1])) {// ÁöÁ¤ÇÑ À¯Àú°¡ Á¸ÀçÇÏ´Â °æ¿ì
+		// ë‹¤ìŒ í† í° ì—†ìœ¼ë©´ ëœë¤ìœ¼ë¡œ, ë‹¤ìŒ í† í°ì´ ìˆìœ¼ë©´ í•´ë‹¹ ìœ ì €ê°€ ìˆëŠ”ì§€ í™•ì¸í•˜ê³  ì—†ìœ¼ë©´ ì˜¤ë¥˜ë©”ì„¸ì§€, ìˆìœ¼ë©´ ë°©ì¥ ë³€ê²½
+		// TODO ìë™ ìƒì„±ëœ ë©”ì†Œë“œ ìŠ¤í…
+		if (isOwner(user)) {// ëª…ë ¹ì–´ë¥¼ í˜¸ì¶œí•œ ìœ ì €ê°€ ë°©ì¥ì¸ì§€ í™•ì¸
+			if (tokens.length == 2) {// ìœ ì €ë¥¼ ì§€ì •í•œ ê²½ìš°
+				if (user.getCurrentRoom().getUsers().containsKey(tokens[1])) {// ì§€ì •í•œ ìœ ì €ê°€ ì¡´ì¬í•˜ëŠ” ê²½ìš°
 					user.getCurrentRoom().setOwner(tokens[1]);
-					sendToAll("	* " + tokens[1] + "´ÔÀ¸·Î ¹æÀåÀÌ º¯°æµÇ¾ú½À´Ï´Ù.", user);
-					System.out.println(user.getCurrentRoom() + "ÀÇ ¹æÀåÀÌ" + tokens[1] + "·Î º¯°æµÊ");
-					return "	* ¼º°ø : " + tokens[1] + "·Î ¹æÀå º¯°æµÊ";
-				} else {// ÁöÁ¤ÇÑ À¯Àú°¡ Á¸ÀçÇÏÁö ¾Ê´Â °æ¿ì
-					return "	* ¿À·ù : ÁöÁ¤ÇÑ À¯Àú°¡ ÇØ´ç ¹æ¿¡ Á¸ÀçÇÏÁö ¾Ê½À´Ï´Ù.";
+					sendToAll("	* " + tokens[1] + "ë‹˜ìœ¼ë¡œ ë°©ì¥ì´ ë³€ê²½ë˜ì—ˆìŠµë‹ˆë‹¤.", user);
+					System.out.println(user.getCurrentRoom() + "ì˜ ë°©ì¥ì´" + tokens[1] + "ë¡œ ë³€ê²½ë¨");
+					return "	* ì„±ê³µ : " + tokens[1] + "ë¡œ ë°©ì¥ ë³€ê²½ë¨";
+				} else {// ì§€ì •í•œ ìœ ì €ê°€ ì¡´ì¬í•˜ì§€ ì•ŠëŠ” ê²½ìš°
+					return "	* ì˜¤ë¥˜ : ì§€ì •í•œ ìœ ì €ê°€ í•´ë‹¹ ë°©ì— ì¡´ì¬í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤.";
 				}
-			} else {// À¯Àú¸¦ ÁöÁ¤ÇÏÁö ¾ÊÀº °æ¿ì
+			} else {// ìœ ì €ë¥¼ ì§€ì •í•˜ì§€ ì•Šì€ ê²½ìš°
 				Set<String> set = user.getCurrentRoom().getUsers().keySet();
 				Iterator<String> it = set.iterator();
 				if (it.hasNext()) {
 					String a = it.next();
-					if (!user.getName().equals(a)) {// º»ÀÎÀÌ °É·ÈÀ» °æ¿ì
+					if (!user.getName().equals(a)) {// ë³¸ì¸ì´ ê±¸ë ¸ì„ ê²½ìš°
 						user.getCurrentRoom().setOwner(it.next());
-						sendToAll("	* " + user.getCurrentRoom().getOwner() + "´ÔÀ¸·Î ¹æÀåÀÌ º¯°æµÇ¾ú½À´Ï´Ù.", user);
+						sendToAll("	* " + user.getCurrentRoom().getOwner() + "ë‹˜ìœ¼ë¡œ ë°©ì¥ì´ ë³€ê²½ë˜ì—ˆìŠµë‹ˆë‹¤.", user);
 						return headChange(tokens, user);
 					}
-					return "	* ¼º°ø : ·£´ıÀ¸·Î ¹æÀåÀÌ º¯°æµÇ¾ú½À´Ï´Ù.";
+					return "	* ì„±ê³µ : ëœë¤ìœ¼ë¡œ ë°©ì¥ì´ ë³€ê²½ë˜ì—ˆìŠµë‹ˆë‹¤.";
 				} else {
-					return "	* ¿À·ù : ±ÇÇÑÀ» ³Ñ±æ À¯Àú°¡ ¾ø½À´Ï´Ù.";
+					return "	* ì˜¤ë¥˜ : ê¶Œí•œì„ ë„˜ê¸¸ ìœ ì €ê°€ ì—†ìŠµë‹ˆë‹¤.";
 				}
 			}
-		} else {// ¹æÀåÀÌ ¾Æ´Ò °æ¿ì
-			return "	* ¿À·ù : ¹æÀåÀÌ ¾Æ´Ï±â ¶§¹®¿¡ ¹æÀåÀ» º¯°æÇÒ ±ÇÇÑÀÌ ¾ø½À´Ï´Ù.";
+		} else {// ë°©ì¥ì´ ì•„ë‹ ê²½ìš°
+			return "	* ì˜¤ë¥˜ : ë°©ì¥ì´ ì•„ë‹ˆê¸° ë•Œë¬¸ì— ë°©ì¥ì„ ë³€ê²½í•  ê¶Œí•œì´ ì—†ìŠµë‹ˆë‹¤.";
 		}
 	}
 
-	synchronized private String roomList(String[] tokens, User user) throws IOException {// ¹æ ¸®½ºÆ® º¸³»±â
+	synchronized private String roomList(String[] tokens, User user) throws IOException {// ë°© ë¦¬ìŠ¤íŠ¸ ë³´ë‚´ê¸°
 		Set<String> set = chatRooms.keySet();
 		Iterator<String> it = set.iterator();
 		send(bar, user);
 		while (it.hasNext()) {
 			String rn = it.next();
-			send(" * " + rn + " : " + chatRooms.get(rn).getUsers().size() + "¸í", user);
+			send(" * " + rn + " : " + chatRooms.get(rn).getUsers().size() + "ëª…", user);
 		}
 		send(bar, user);
 		return null;
 	}
 
-	private String roomDestroy(String[] tokens, User user) {// ¹æ »èÁ¦(¹æÀå±ÇÇÑ)
-		if (isOwner(user)) {// ¹æÀåÀÌ ¸ÂÀ¸¸é
+	private String roomDestroy(String[] tokens, User user) {// ë°© ì‚­ì œ(ë°©ì¥ê¶Œí•œ)
+		if (isOwner(user)) {// ë°©ì¥ì´ ë§ìœ¼ë©´
 			try {
 				return roomDestroy2(user.getCurrentRoom().getName());
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		} else {
-			return "	* ¿À·ù : ¹æ »èÁ¦¸¦ ¼öÇàÇÒ ±ÇÇÑÀÌ ¾ø½À´Ï´Ù.";
+			return "	* ì˜¤ë¥˜ : ë°© ì‚­ì œë¥¼ ìˆ˜í–‰í•  ê¶Œí•œì´ ì—†ìŠµë‹ˆë‹¤.";
 		}
-		// TODO ÀÚµ¿ »ı¼ºµÈ ¸Ş¼Òµå ½ºÅÓ
+		// TODO ìë™ ìƒì„±ëœ ë©”ì†Œë“œ ìŠ¤í…
 		return null;
 	}
 
-	synchronized private String roomDestroy2(String roomName) throws IOException {// roomÀ» ¸Å°³º¯¼ö·Î ¹Ş´Â ¹æ »èÁ¦
+	synchronized private String roomDestroy2(String roomName) throws IOException {// roomì„ ë§¤ê°œë³€ìˆ˜ë¡œ ë°›ëŠ” ë°© ì‚­ì œ
 		chatRooms.remove(roomName);
-		return "[" + roomName + "]¹æÀÌ »èÁ¦µÇ¾ú½À´Ï´Ù.";
+		return "[" + roomName + "]ë°©ì´ ì‚­ì œë˜ì—ˆìŠµë‹ˆë‹¤.";
 	}
 
 	synchronized private String kick(String[] tokens, User user) {
-		if (isOwner(user)) {// ¹æÀåÀÌ°í
-			if (user.getCurrentRoom().getUsers().containsKey(tokens[1])) {// ÀÔ·ÂÇÑ À¯Àú°¡ Á¸ÀçÇÏ¸é
+		if (isOwner(user)) {// ë°©ì¥ì´ê³ 
+			if (user.getCurrentRoom().getUsers().containsKey(tokens[1])) {// ì…ë ¥í•œ ìœ ì €ê°€ ì¡´ì¬í•˜ë©´
 				User kickUser = user.getCurrentRoom().getUsers().get(tokens[1]);
 				if (!user.getCurrentRoom().removeMember(kickUser.getName())) {
-					return "	* ¿À·ù : ÇØ´ç À¯Àú¸¦ ÅğÀå½ÃÅ°Áö ¸øÇß½À´Ï´Ù.";
+					return "	* ì˜¤ë¥˜ : í•´ë‹¹ ìœ ì €ë¥¼ í‡´ì¥ì‹œí‚¤ì§€ ëª»í–ˆìŠµë‹ˆë‹¤.";
 				}
 				chatRooms.get("__waitting__").getUsers().put(kickUser.getName(), kickUser);
 				kickUser.setCurrentRoom(chatRooms.get("__waitting__"));
 				try {
-					kickUser.getChatOut().writeUTF("¹æÀå¿¡ ÀÇÇØ " + user.getCurrentRoom().getName() + "¿¡¼­ °­Á¦ ÅğÀåµÇ¾ú½À´Ï´Ù.");
+					kickUser.getChatOut().writeUTF("ë°©ì¥ì— ì˜í•´ " + user.getCurrentRoom().getName() + "ì—ì„œ ê°•ì œ í‡´ì¥ë˜ì—ˆìŠµë‹ˆë‹¤.");
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-				return "	* ¼º°ø : ÇØ´ç À¯Àú¸¦ °­Á¦ ÅğÀå½ÃÄ×½À´Ï´Ù.";
+				return "	* ì„±ê³µ : í•´ë‹¹ ìœ ì €ë¥¼ ê°•ì œ í‡´ì¥ì‹œì¼°ìŠµë‹ˆë‹¤.";
 			} else {
-				return "	* ¿À·ù : ÁöÁ¤ÇÑ À¯Àú°¡ ÇØ´ç ¹æ¿¡ Á¸ÀçÇÏÁö ¾Ê½À´Ï´Ù.";
+				return "	* ì˜¤ë¥˜ : ì§€ì •í•œ ìœ ì €ê°€ í•´ë‹¹ ë°©ì— ì¡´ì¬í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤.";
 			}
 		} else {
-			return "	* ¿À·ù : ¹æÀåÀÌ ¾Æ´Ï¹Ç·Î Ãß¹æÇÒ ±ÇÇÑÀÌ ¾ø½À´Ï´Ù.";
+			return "	* ì˜¤ë¥˜ : ë°©ì¥ì´ ì•„ë‹ˆë¯€ë¡œ ì¶”ë°©í•  ê¶Œí•œì´ ì—†ìŠµë‹ˆë‹¤.";
 		}
 	}
 
-	private String setpw(String[] tokens, User user) {// ºñ¹Ğ¹øÈ£ ¼³Á¤ÇÏ´Â ¸Ş¼­µå
+	private String setpw(String[] tokens, User user) {// ë¹„ë°€ë²ˆí˜¸ ì„¤ì •í•˜ëŠ” ë©”ì„œë“œ
 		if (isOwner(user)) {
 			user.getCurrentRoom().setPassword(tokens[1]);
-			return "	* ¼º°ø : ÆĞ½º¿öµå¸¦ ¼³Á¤Çß½À´Ï´Ù.";
+			return "	* ì„±ê³µ : íŒ¨ìŠ¤ì›Œë“œë¥¼ ì„¤ì •í–ˆìŠµë‹ˆë‹¤.";
 		} else {
-			return "	* ¿À·ù : ¹æÀåÀÌ ¾Æ´Ï¹Ç·Î ÆĞ½º¿öµå¸¦ ¼³Á¤ÇÒ ±ÇÇÑÀÌ ¾ø½À´Ï´Ù.";
+			return "	* ì˜¤ë¥˜ : ë°©ì¥ì´ ì•„ë‹ˆë¯€ë¡œ íŒ¨ìŠ¤ì›Œë“œë¥¼ ì„¤ì •í•  ê¶Œí•œì´ ì—†ìŠµë‹ˆë‹¤.";
 		}
 	}
 
-	synchronized private String users(String[] tokens, User user) throws IOException {// À¯Àú ¸ñ·Ï º¸¿©ÁÜ
+	synchronized private String users(String[] tokens, User user) throws IOException {// ìœ ì € ëª©ë¡ ë³´ì—¬ì¤Œ
 		Set<String> set = user.getCurrentRoom().getUsers().keySet();
 		Iterator<String> it = set.iterator();
 		send(bar, user);
-		send("	*** " + user.getCurrentRoom().getName() + "ÀÇ À¯Àú ¸ñ·Ï ***", user);
+		send("	*** " + user.getCurrentRoom().getName() + "ì˜ ìœ ì € ëª©ë¡ ***", user);
 		while (it.hasNext()) {
 			send(it.next(), user);
 		}
@@ -332,91 +332,91 @@ public class Rooms {
 		return null;
 	}
 
-	synchronized private String roomJoin(String[] tokens, User user) throws IOException {// ¹æ¿¡ µé¾î°¡´Â ¸Ş¼Òµå
-		if (chatRooms.containsKey(tokens[1])) {// ÀÔ·ÂÇÑ ¹æ ÀÌ¸§ÀÌ Á¸ÀçÇÒ °æ¿ì
-			if (user.getCurrentRoom().getName().equals(tokens[1])) {// ÀÔ·ÂÇÑ ¹æ ÀÌ¸§ÀÌ ÀÚ±â°¡ ÀÖ´Â ¹æÀÏ °æ¿ì
-				return "	* ¿À·ù : ÀÌ¹Ì ÇØ´ç ¹æ¿¡ ÀÔÀåÇØ ÀÖ½À´Ï´Ù.";
+	synchronized private String roomJoin(String[] tokens, User user) throws IOException {// ë°©ì— ë“¤ì–´ê°€ëŠ” ë©”ì†Œë“œ
+		if (chatRooms.containsKey(tokens[1])) {// ì…ë ¥í•œ ë°© ì´ë¦„ì´ ì¡´ì¬í•  ê²½ìš°
+			if (user.getCurrentRoom().getName().equals(tokens[1])) {// ì…ë ¥í•œ ë°© ì´ë¦„ì´ ìê¸°ê°€ ìˆëŠ” ë°©ì¼ ê²½ìš°
+				return "	* ì˜¤ë¥˜ : ì´ë¯¸ í•´ë‹¹ ë°©ì— ì…ì¥í•´ ìˆìŠµë‹ˆë‹¤.";
 			} else {
-				if (chatRooms.get(tokens[1]).getPassword() != null) {// ÇØ´ç ¹æ¿¡ ºñ¹Ğ¹øÈ£°¡ Á¸ÀçÇÒ °æ¿ì
-					if (tokens.length > 1 && tokens[2].equals(chatRooms.get(tokens[1]).getPassword())) {// ºñ¹Ğ¹øÈ£°¡ ÀÏÄ¡ÇÒ °æ¿ì
-						roomex(user, false);// ±âÁ¸ ¹æ¿¡¼­ ÅğÀåÇÏ°í
+				if (chatRooms.get(tokens[1]).getPassword() != null) {// í•´ë‹¹ ë°©ì— ë¹„ë°€ë²ˆí˜¸ê°€ ì¡´ì¬í•  ê²½ìš°
+					if (tokens.length > 1 && tokens[2].equals(chatRooms.get(tokens[1]).getPassword())) {// ë¹„ë°€ë²ˆí˜¸ê°€ ì¼ì¹˜í•  ê²½ìš°
+						roomex(user, false);// ê¸°ì¡´ ë°©ì—ì„œ í‡´ì¥í•˜ê³ 
 						chatRooms.get(tokens[1]).addMember(user);
 						user.setCurrentRoom(chatRooms.get(tokens[1]));
-						sendToAll("	* " + user.getName() + "´ÔÀÌ ÀÔÀåÇÏ¼Ì½À´Ï´Ù.", user);
-						System.out.println(user.getName() + "´ÔÀÌ " + user.getCurrentRoom().getName() + "¿¡ ÀÔÀåÇÏ¿´½À´Ï´Ù.");
-						System.out.println("[" + user.getCurrentRoom().getName() + "]ÀÇ Á¢¼ÓÀÚ ¸ñ·Ï : "
+						sendToAll("	* " + user.getName() + "ë‹˜ì´ ì…ì¥í•˜ì…¨ìŠµë‹ˆë‹¤.", user);
+						System.out.println(user.getName() + "ë‹˜ì´ " + user.getCurrentRoom().getName() + "ì— ì…ì¥í•˜ì˜€ìŠµë‹ˆë‹¤.");
+						System.out.println("[" + user.getCurrentRoom().getName() + "]ì˜ ì ‘ì†ì ëª©ë¡ : "
 								+ user.getCurrentRoom().getUsers().keySet().toString());
-						return "	* " + user.getCurrentRoom().getName() + "¿¡ ÀÔÀåµÇ¾ú½À´Ï´Ù.";
+						return "	* " + user.getCurrentRoom().getName() + "ì— ì…ì¥ë˜ì—ˆìŠµë‹ˆë‹¤.";
 					} else {
-						return "	* ¿À·ù : ÆĞ½º¿öµå°¡ ÀÏÄ¡ÇÏÁö ¾Ê½À´Ï´Ù.";
+						return "	* ì˜¤ë¥˜ : íŒ¨ìŠ¤ì›Œë“œê°€ ì¼ì¹˜í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤.";
 					}
-				} else {// ºñ¹Ğ¹øÈ£°¡ Á¸ÀçÇÏÁö ¾ÊÀ» °æ¿ì
-					roomex(user, false);// ±âÁ¸ ¹æ¿¡¼­ ÅğÀåÇÏ°í
+				} else {// ë¹„ë°€ë²ˆí˜¸ê°€ ì¡´ì¬í•˜ì§€ ì•Šì„ ê²½ìš°
+					roomex(user, false);// ê¸°ì¡´ ë°©ì—ì„œ í‡´ì¥í•˜ê³ 
 					chatRooms.get(tokens[1]).addMember(user);
 					user.setCurrentRoom(chatRooms.get(tokens[1]));
-					sendToAll("	* " + user.getName() + "´ÔÀÌ ÀÔÀåÇÏ¼Ì½À´Ï´Ù.", user);
-					System.out.println(user.getName() + "´ÔÀÌ " + user.getCurrentRoom().getName() + "¿¡ ÀÔÀåÇÏ¿´½À´Ï´Ù.");
-					System.out.println("[" + user.getCurrentRoom().getName() + "]ÀÇ Á¢¼ÓÀÚ ¸ñ·Ï : "
+					sendToAll("	* " + user.getName() + "ë‹˜ì´ ì…ì¥í•˜ì…¨ìŠµë‹ˆë‹¤.", user);
+					System.out.println(user.getName() + "ë‹˜ì´ " + user.getCurrentRoom().getName() + "ì— ì…ì¥í•˜ì˜€ìŠµë‹ˆë‹¤.");
+					System.out.println("[" + user.getCurrentRoom().getName() + "]ì˜ ì ‘ì†ì ëª©ë¡ : "
 							+ user.getCurrentRoom().getUsers().keySet().toString());
-					return "	* " + user.getCurrentRoom().getName() + "¿¡ ÀÔÀåµÇ¾ú½À´Ï´Ù.";
+					return "	* " + user.getCurrentRoom().getName() + "ì— ì…ì¥ë˜ì—ˆìŠµë‹ˆë‹¤.";
 				}
 			}
 		} else {
-			return "	* ¿À·ù : Á¸ÀçÇÏÁö ¾Ê´Â ¹æ ÀÌ¸§ÀÔ´Ï´Ù.";
+			return "	* ì˜¤ë¥˜ : ì¡´ì¬í•˜ì§€ ì•ŠëŠ” ë°© ì´ë¦„ì…ë‹ˆë‹¤.";
 		}
 	}
 
-	private String sysExit(User user) throws IOException {// ¹æ¿¡¼­ ÅğÀå½ÃÅ°°í Ä¿¸Çµå ºÎ¸¥ À¯Àú ½Ã½ºÅÛ Á¾·á½ÃÅ´
+	private String sysExit(User user) throws IOException {// ë°©ì—ì„œ í‡´ì¥ì‹œí‚¤ê³  ì»¤ë§¨ë“œ ë¶€ë¥¸ ìœ ì € ì‹œìŠ¤í…œ ì¢…ë£Œì‹œí‚´
 		roomex(user, false);
-		return "¤é";
+		return "ã…¹";
 	}
 
-	private String roomExit(String[] tokens, User user) throws IOException {// ¹æ¿¡¼­ ÅğÀåÇÏ±â Àü ´ë±â¹æÀÌ¾ú´ÂÁö Ã¼Å©
+	private String roomExit(String[] tokens, User user) throws IOException {// ë°©ì—ì„œ í‡´ì¥í•˜ê¸° ì „ ëŒ€ê¸°ë°©ì´ì—ˆëŠ”ì§€ ì²´í¬
 		if (user.getCurrentRoom().getName().equals("__waitting__")) {
-			return "	* ¿À·ù : ´ë±â¹æ¿¡¼­´Â ÅğÀåÇÒ ¼ö ¾ø½À´Ï´Ù.";
+			return "	* ì˜¤ë¥˜ : ëŒ€ê¸°ë°©ì—ì„œëŠ” í‡´ì¥í•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.";
 		}
 		return roomex(user, true);
 	}
 
-	synchronized private String roomex(User user, boolean gowait) throws IOException {// ¹æ¿¡¼­ ÅğÀå
+	synchronized private String roomex(User user, boolean gowait) throws IOException {// ë°©ì—ì„œ í‡´ì¥
 		ChatRoom exRoom = user.getCurrentRoom();
 		if (!exRoom.getName().equals("__waitting__")) {
-			sendToAll("	* [" + user.getName() + "]´ÔÀÌ [" + user.getCurrentRoom().getName() + "]¿¡¼­ ÅğÀåÇÏ¿´½À´Ï´Ù.", user);
+			sendToAll("	* [" + user.getName() + "]ë‹˜ì´ [" + user.getCurrentRoom().getName() + "]ì—ì„œ í‡´ì¥í•˜ì˜€ìŠµë‹ˆë‹¤.", user);
 		}
-		boolean alone = user.getCurrentRoom().getUsers().size() == 1;// ¹æ¿¡ È¥ÀÚ ÀÖ¾ú´ÂÁö Ã¼Å©
+		boolean alone = user.getCurrentRoom().getUsers().size() == 1;// ë°©ì— í˜¼ì ìˆì—ˆëŠ”ì§€ ì²´í¬
 
-		if (isOwner(user) && !alone) {// ¿À³Ê¿´°í È¥ÀÚ°¡ ¾Æ´Ï¾úÀ¸¸é
+		if (isOwner(user) && !alone) {// ì˜¤ë„ˆì˜€ê³  í˜¼ìê°€ ì•„ë‹ˆì—ˆìœ¼ë©´
 			String[] tokens = new String[] { "" };
-			headChange(tokens, user);// ¹æÀåÀ» ¹Ù²Û´Ù
+			headChange(tokens, user);// ë°©ì¥ì„ ë°”ê¾¼ë‹¤
 		}
 		if (!user.getCurrentRoom().removeMember(user.getName())) {
-			System.out.println("¿¡·¯! roomexÀÇ removeMember ½ÇÆĞ-" + user.getName());
-			return "	* ¿À·ù : ÇØ´ç À¯Àú¸¦ ÅğÀå½ÃÅ°Áö ¸øÇß½À´Ï´Ù.";
+			System.out.println("ì—ëŸ¬! roomexì˜ removeMember ì‹¤íŒ¨-" + user.getName());
+			return "	* ì˜¤ë¥˜ : í•´ë‹¹ ìœ ì €ë¥¼ í‡´ì¥ì‹œí‚¤ì§€ ëª»í–ˆìŠµë‹ˆë‹¤.";
 		}
 
-		System.out.println("[" + user.getName() + "]´ÔÀÌ [" + exRoom.getName() + "]¿¡¼­ ÅğÀåÇÏ¿´½À´Ï´Ù.");
-		System.out.println("[" + exRoom.getName() + "]ÀÇ Á¢¼ÓÀÚ ¸ñ·Ï : " + exRoom.getUsers().keySet().toString());
+		System.out.println("[" + user.getName() + "]ë‹˜ì´ [" + exRoom.getName() + "]ì—ì„œ í‡´ì¥í•˜ì˜€ìŠµë‹ˆë‹¤.");
+		System.out.println("[" + exRoom.getName() + "]ì˜ ì ‘ì†ì ëª©ë¡ : " + exRoom.getUsers().keySet().toString());
 
 		if (gowait) {
 			chatRooms.get("__waitting__").getUsers().put(user.getName(), user);
 			user.setCurrentRoom(chatRooms.get("__waitting__"));
-			if (alone && isOwner(user)) {// ¹æ¿¡ È¥ÀÚ ÀÖ°í ¿À³Ê¿´À¸¸é(´ë±â¹æÀº È¥ÀÚÀÖ¾ú¾îµµ ¾ø¾Ö¸é ¾ÈµÇ´Ï±î)
+			if (alone && isOwner(user)) {// ë°©ì— í˜¼ì ìˆê³  ì˜¤ë„ˆì˜€ìœ¼ë©´(ëŒ€ê¸°ë°©ì€ í˜¼ììˆì—ˆì–´ë„ ì—†ì• ë©´ ì•ˆë˜ë‹ˆê¹Œ)
 				try {
-					send(roomDestroy2(exRoom.getName()), user);// ¿ø·¡ ÀÖ´ø ¹æÀ» ºÎ¼ø´Ù
+					send(roomDestroy2(exRoom.getName()), user);// ì›ë˜ ìˆë˜ ë°©ì„ ë¶€ìˆœë‹¤
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 			}
-			return "	* ´ë±â¹æÀ¸·Î ÀÌµ¿µÇ¾ú½À´Ï´Ù.";
+			return "	* ëŒ€ê¸°ë°©ìœ¼ë¡œ ì´ë™ë˜ì—ˆìŠµë‹ˆë‹¤.";
 		} else {
-			if (alone && isOwner(user)) {// ¹æ¿¡ È¥ÀÚ ÀÖ°í ¿À³Ê¿´À¸¸é(´ë±â¹æÀº È¥ÀÚÀÖ¾ú¾îµµ ¾ø¾Ö¸é ¾ÈµÇ´Ï±î)
+			if (alone && isOwner(user)) {// ë°©ì— í˜¼ì ìˆê³  ì˜¤ë„ˆì˜€ìœ¼ë©´(ëŒ€ê¸°ë°©ì€ í˜¼ììˆì—ˆì–´ë„ ì—†ì• ë©´ ì•ˆë˜ë‹ˆê¹Œ)
 				try {
-					send(roomDestroy2(exRoom.getName()), user);// ¿ø·¡ ÀÖ´ø ¹æÀ» ºÎ¼ø´Ù
+					send(roomDestroy2(exRoom.getName()), user);// ì›ë˜ ìˆë˜ ë°©ì„ ë¶€ìˆœë‹¤
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 			}
-			return "	* ±âÁ¸ ¹æ¿¡¼­ ÅğÀåµÇ¾ú½À´Ï´Ù.";
+			return "	* ê¸°ì¡´ ë°©ì—ì„œ í‡´ì¥ë˜ì—ˆìŠµë‹ˆë‹¤.";
 		}
 
 	}
@@ -425,9 +425,9 @@ public class Rooms {
 		if (user.getCurrentRoom().getName().equals(chatRooms.get("__waitting__").getName())) {
 			ChatRoom room = null;
 			if (tokens.length == 2 || tokens.length == 3) {
-				if (tokens[1].matches("[0-9|a-z|A-Z|¤¡-¤¾|¤¿-¤Ó|°¡-Èş]*") && tokens[1].length() <= 10) {// ¹æ ÀÌ¸§ÀÌ Á¶°Ç¿¡ ¸Â´ÂÁö °Ë»ç
-					if (chatRooms.containsKey(tokens[1])) {// ¹æÀÌ¸§ Áßº¹°Ë»ç
-						return "	* ¿À·ù : Áßº¹µÈ ¹æ ÀÌ¸§ÀÌ ÀÖ½À´Ï´Ù.";
+				if (tokens[1].matches("[0-9|a-z|A-Z|ã„±-ã…|ã…-ã…£|ê°€-í]*") && tokens[1].length() <= 10) {// ë°© ì´ë¦„ì´ ì¡°ê±´ì— ë§ëŠ”ì§€ ê²€ì‚¬
+					if (chatRooms.containsKey(tokens[1])) {// ë°©ì´ë¦„ ì¤‘ë³µê²€ì‚¬
+						return "	* ì˜¤ë¥˜ : ì¤‘ë³µëœ ë°© ì´ë¦„ì´ ìˆìŠµë‹ˆë‹¤.";
 					} else {
 						if (tokens.length == 2) {
 							room = new ChatRoom(tokens[1], user.getName());
@@ -436,30 +436,30 @@ public class Rooms {
 						}
 					}
 				} else {
-					return "	* ¿À·ù : ¹æ Á¦¸ñÀÌ Á¶°Ç¿¡ ¸ÂÁö ¾ÊÀ½";
+					return "	* ì˜¤ë¥˜ : ë°© ì œëª©ì´ ì¡°ê±´ì— ë§ì§€ ì•ŠìŒ";
 				}
 			} else {
-				return "	* ¿À·ù : ¸í·É¾î ±¸¼ºÀÌ ÀûÀıÇÏÁö ¾ÊÀ½";
+				return "	* ì˜¤ë¥˜ : ëª…ë ¹ì–´ êµ¬ì„±ì´ ì ì ˆí•˜ì§€ ì•ŠìŒ";
 			}
 			chatRooms.put(room.getName(), room);
 			String exRoomName = user.getCurrentRoom().getName();
 			user.getCurrentRoom().getUsers().remove(user.getName());
-			System.out.println("[" + user.getName() + "]´ÔÀÌ [" + exRoomName + "]¿¡¼­ ÅğÀåÇÏ¿´½À´Ï´Ù.");
+			System.out.println("[" + user.getName() + "]ë‹˜ì´ [" + exRoomName + "]ì—ì„œ í‡´ì¥í•˜ì˜€ìŠµë‹ˆë‹¤.");
 			room.getUsers().put(user.getName(), user);
-			System.out.println("[" + user.getName() + "]´ÔÀÌ [" + room.getName() + "]À» »ı¼º ÈÄ ÀÔÀåÇÏ¿´½À´Ï´Ù.");
+			System.out.println("[" + user.getName() + "]ë‹˜ì´ [" + room.getName() + "]ì„ ìƒì„± í›„ ì…ì¥í•˜ì˜€ìŠµë‹ˆë‹¤.");
 			user.setCurrentRoom(room);
 
 			try {
-				send("	* [" + user.getCurrentRoom().getName() + "]¿¡ ÀÔÀåµÇ¾ú½À´Ï´Ù.", user);
-				send("	* [" + user.getName() + "]´ÔÀº [" + user.getCurrentRoom().getName() + "]ÀÇ ¹æÀåÀÔ´Ï´Ù.", user);
-				send("	* ÅğÀå°ú µ¿½Ã¿¡ ¹æÀå ±ÇÇÑÀ» ÀÒ°Ô µÇ¸ç, ¹æ À¯Àú Áß ·£´ıÇÏ°Ô ±ÇÇÑÀÌ ºÎ¿©µË´Ï´Ù.", user);
+				send("	* [" + user.getCurrentRoom().getName() + "]ì— ì…ì¥ë˜ì—ˆìŠµë‹ˆë‹¤.", user);
+				send("	* [" + user.getName() + "]ë‹˜ì€ [" + user.getCurrentRoom().getName() + "]ì˜ ë°©ì¥ì…ë‹ˆë‹¤.", user);
+				send("	* í‡´ì¥ê³¼ ë™ì‹œì— ë°©ì¥ ê¶Œí•œì„ ìƒê²Œ ë˜ë©°, ë°© ìœ ì € ì¤‘ ëœë¤í•˜ê²Œ ê¶Œí•œì´ ë¶€ì—¬ë©ë‹ˆë‹¤.", user);
 			} catch (IOException e) {
-				// TODO ÀÚµ¿ »ı¼ºµÈ catch ºí·Ï
+				// TODO ìë™ ìƒì„±ëœ catch ë¸”ë¡
 				e.printStackTrace();
 			}
-			return "	* ¼º°ø : ¹æ »ı¼º ¿Ï·á";
-		} else {// ´ë±â¹æÀÌ ¾Æ´Ñ ¹æ¿¡¼­ È£ÃâÇßÀ» °æ¿ì
-			return "	* ¿À·ù : ´ë±â¹æÀÌ ¾Æ´Ñ ¹æ¿¡¼­ ¹æ »ı¼º ºÒ°¡";
+			return "	* ì„±ê³µ : ë°© ìƒì„± ì™„ë£Œ";
+		} else {// ëŒ€ê¸°ë°©ì´ ì•„ë‹Œ ë°©ì—ì„œ í˜¸ì¶œí–ˆì„ ê²½ìš°
+			return "	* ì˜¤ë¥˜ : ëŒ€ê¸°ë°©ì´ ì•„ë‹Œ ë°©ì—ì„œ ë°© ìƒì„± ë¶ˆê°€";
 		}
 	}
 
