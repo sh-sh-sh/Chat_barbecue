@@ -5,7 +5,7 @@ import server.GrillServer;
 public class ServerApp {
 
 	public static void main(String[] args) {
-		GrillServer server = new GrillServer();
+		GrillServer server = new GrillServer(); 
 		server.start();
 	}
 
