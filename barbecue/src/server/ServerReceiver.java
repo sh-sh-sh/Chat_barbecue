@@ -2,7 +2,7 @@ package server;
 
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
-import java.io.File;
+import java.io.File; 
 import java.io.IOException;
 import java.util.Arrays;
 
@@ -22,13 +22,13 @@ public class ServerReceiver extends Thread {
 			in = new DataInputStream(user.getChatSocket().getInputStream());
 			filein = new BufferedInputStream(user.getFileSocket().getInputStream());
 		} catch (IOException e) {
-			// TODO ÀÚµ¿ »ı¼ºµÈ catch ºí·Ï
+			// TODO ìë™ ìƒì„±ëœ catch ë¸”ë¡
 			e.printStackTrace();
 		}
 
 	}
 
-	private void send(String msg) throws IOException {// »ç¿ëÀÚ¿¡°Ô Àü´ŞÇÏ´Â ¸Ş¼¼Áö¿¡ ¾²´Â ¸Ş¼Òµå ÁÙÀÎ°Å
+	private void send(String msg) throws IOException {// ì‚¬ìš©ìì—ê²Œ ì „ë‹¬í•˜ëŠ” ë©”ì„¸ì§€ì— ì“°ëŠ” ë©”ì†Œë“œ ì¤„ì¸ê±°
 		user.getChatOut().writeUTF(msg);
 	}
 
@@ -36,17 +36,17 @@ public class ServerReceiver extends Thread {
 		try {
 			user.setName(user.getIp_port());
 			if (!rooms.checkName("__waitting__", user)) {
-				System.out.println("¿¡·¯ 00 : checkName ½ÇÆĞ - " + user.getName());
+				System.out.println("ì—ëŸ¬ 00 : checkName ì‹¤íŒ¨ - " + user.getName());
 			}
 
 			if (!rooms.addMember("__waitting__", user)) {
-				System.out.println("¿¡·¯ 01 : addmember ½ÇÆĞ - " + user.getName());
+				System.out.println("ì—ëŸ¬ 01 : addmember ì‹¤íŒ¨ - " + user.getName());
 			}
-			System.out.println("[" + user.getName() + "]ÀÌ [" + user.getCurrentRoom().getName() + "]¿¡ µé¾î°¨");
-			System.out.println("[" + user.getCurrentRoom().getName() + "]ÀÇ Á¢¼ÓÀÚ ¸ñ·Ï : "
+			System.out.println("[" + user.getName() + "]ì´ [" + user.getCurrentRoom().getName() + "]ì— ë“¤ì–´ê°");
+			System.out.println("[" + user.getCurrentRoom().getName() + "]ì˜ ì ‘ì†ì ëª©ë¡ : "
 					+ user.getCurrentRoom().getUsers().keySet().toString());
-			send("	* SYSTEM : " + user.getName() + "´Ô, ¹İ°©½À´Ï´Ù.");
-			send("	* SYSTEM : ¸í·É¾î¸¦ È®ÀÎÇÏ·Á¸é /?¸¦ ÀÔ·ÂÇØ ÁÖ¼¼¿ä.");
+			send("	* SYSTEM : " + user.getName() + "ë‹˜, ë°˜ê°‘ìŠµë‹ˆë‹¤.");
+			send("	* SYSTEM : ëª…ë ¹ì–´ë¥¼ í™•ì¸í•˜ë ¤ë©´ /?ë¥¼ ì…ë ¥í•´ ì£¼ì„¸ìš”.");
 			System.out.println();
 			String msg;
 			while (in != null) {
@@ -54,33 +54,33 @@ public class ServerReceiver extends Thread {
 				if (msg.startsWith("/")) {// command
 					String cmsg = rooms.processCmd(msg.substring(1), user);
 					if (cmsg != null) {
-						send(cmsg);// Ä¿¸àµå¸¦ Ã³¸®ÇÑ °á°ú ¸Ş¼¼Áö Àü¼Û
+						send(cmsg);// ì»¤ë©˜ë“œë¥¼ ì²˜ë¦¬í•œ ê²°ê³¼ ë©”ì„¸ì§€ ì „ì†¡
 					}
-				} else if (msg.startsWith("¤Ø")) {// ÆÄÀÏ ¼ö½ÅµÊ
-					System.out.println("ÆÄÀÏ ¼ö½ÅµÊ2");
-					String[] cmd = msg.split("¤Ø");
+				} else if (msg.startsWith("ã…¨")) {// íŒŒì¼ ìˆ˜ì‹ ë¨
+					System.out.println("íŒŒì¼ ìˆ˜ì‹ ë¨2");
+					String[] cmd = msg.split("ã…¨");
 					System.out.println(Arrays.toString(cmd));
 					FileReceiver fr = new FileReceiver(cmd[1], Integer.parseInt(cmd[2]), user.getCurrentRoom().getName(), filein,
 							user.getChatOut());
 					fr.start();
 					sleep(1000);
 					user.getCurrentRoom().getFiles().put(cmd[1], new File("D://" + user.getCurrentRoom() + "//" + cmd[1]));
-					rooms.sendToAll("	* " + user.getName() + "´ÔÀÌ " + cmd[1] + "ÆÄÀÏÀ» º¸³Â½À´Ï´Ù. ÆÄÀÏÀ» ¹ŞÀ¸·Á¸é /filedown ÆÄÀÏÀÌ¸§ À» ÀÔ·ÂÇÏ¼¼¿ä.",
+					rooms.sendToAll("	* " + user.getName() + "ë‹˜ì´ " + cmd[1] + "íŒŒì¼ì„ ë³´ëƒˆìŠµë‹ˆë‹¤. íŒŒì¼ì„ ë°›ìœ¼ë ¤ë©´ /filedown íŒŒì¼ì´ë¦„ ì„ ì…ë ¥í•˜ì„¸ìš”.",
 							user);
-				} else if (msg.equals("¤á")) {// »ó´ë¹æÀÌ ÆÄÀÏ ´Ù¿î ¿Ï·áÇÔ
+				} else if (msg.equals("ã…±")) {// ìƒëŒ€ë°©ì´ íŒŒì¼ ë‹¤ìš´ ì™„ë£Œí•¨
 					if (user.fs != null) {
 						user.fs.interrupt();
 						while (user.fs.isAlive()) {
 						}
-						// System.out.println("ÆÄÀÏ Àü¼Û ¿Ï·á. ÆÄÀÏ Àü¼Û ½º·¹µå ¸¶Ä§");
+						// System.out.println("íŒŒì¼ ì „ì†¡ ì™„ë£Œ. íŒŒì¼ ì „ì†¡ ìŠ¤ë ˆë“œ ë§ˆì¹¨");
 						user.fs = null;
-						System.out.println("ÆÄÀÏ»÷´õ ´İÀ½2");
+						System.out.println("íŒŒì¼ìƒŒë” ë‹«ìŒ2");
 					} else {
-						System.out.println("ÆÄÀÏ Àü¼Û ´İÈû ¿¡·¯");
+						System.out.println("íŒŒì¼ ì „ì†¡ ë‹«í˜ ì—ëŸ¬");
 					}
 				} else {// massage
-					if (msg.contains("¤á") || msg.contains("¤Ø") || msg.contains("¤é")) {
-						send("	* : »ç¿ëÇÒ ¼ö ¾ø´Â Æ¯¼ö¹®ÀÚ¸¦ ÀÔ·ÂÇÏ¼Ì½À´Ï´Ù.");
+					if (msg.contains("ã…±") || msg.contains("ã…¨") || msg.contains("ã…¹")) {
+						send("	* : ì‚¬ìš©í•  ìˆ˜ ì—†ëŠ” íŠ¹ìˆ˜ë¬¸ìë¥¼ ì…ë ¥í•˜ì…¨ìŠµë‹ˆë‹¤.");
 					} else {
 						rooms.sendToAll(msg, user);
 					}
@@ -89,7 +89,7 @@ public class ServerReceiver extends Thread {
 		} catch (IOException e) {
 
 		} catch (InterruptedException e) {
-			// TODO ÀÚµ¿ »ı¼ºµÈ catch ºí·Ï
+			// TODO ìë™ ìƒì„±ëœ catch ë¸”ë¡
 			e.printStackTrace();
 		} finally {
 			try {
@@ -99,14 +99,14 @@ public class ServerReceiver extends Thread {
 				user.getFileSocket().close();
 				ChatRoom a = user.getCurrentRoom();
 				if (!rooms.removeMember(user.getCurrentRoom().getName(), user.getName())) {
-					System.out.println("¿¡·¯ 02 : removeMember ½ÇÆĞ - " + user.getName());
+					System.out.println("ì—ëŸ¬ 02 : removeMember ì‹¤íŒ¨ - " + user.getName());
 				}
-				rooms.sendToAll("	* [" + user.getName() + "]´ÔÀÌ ÇÁ·Î±×·¥À» Á¾·áÇÏ¿´½À´Ï´Ù.", user);
-				System.out.println(" [" + a.getName() + "]¿¡¼­ [" + user.getName() + "]´ÔÀÌ Á¢¼ÓÀ» Á¾·áÇÏ¿´½À´Ï´Ù.");
-				System.out.println("ÇöÀç [" + a.getName() + "] ¹æ Á¢¼ÓÀÚ ¼ö´Â " + a.getUsers().size() + "ÀÔ´Ï´Ù.");
-				System.out.println("[" + a.getName() + "]ÀÇ Á¢¼ÓÀÚ ¸ñ·Ï:" + a.getUsers().keySet().toString());
+				rooms.sendToAll("	* [" + user.getName() + "]ë‹˜ì´ í”„ë¡œê·¸ë¨ì„ ì¢…ë£Œí•˜ì˜€ìŠµë‹ˆë‹¤.", user);
+				System.out.println(" [" + a.getName() + "]ì—ì„œ [" + user.getName() + "]ë‹˜ì´ ì ‘ì†ì„ ì¢…ë£Œí•˜ì˜€ìŠµë‹ˆë‹¤.");
+				System.out.println("í˜„ì¬ [" + a.getName() + "] ë°© ì ‘ì†ì ìˆ˜ëŠ” " + a.getUsers().size() + "ì…ë‹ˆë‹¤.");
+				System.out.println("[" + a.getName() + "]ì˜ ì ‘ì†ì ëª©ë¡:" + a.getUsers().keySet().toString());
 			} catch (IOException e) {
-				// TODO ÀÚµ¿ »ı¼ºµÈ catch ºí·Ï
+				// TODO ìë™ ìƒì„±ëœ catch ë¸”ë¡
 				e.printStackTrace();
 			}
 		}
